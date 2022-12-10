@@ -1,8 +1,9 @@
 import {createElement} from '../render.js';
 
-function createAddFormTemplate() {
+function createAddPointTemplate() {
   return (
-    `<li class="trip-events__item">
+    `
+    <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
           <div class="event__type-wrapper">
@@ -163,24 +164,25 @@ function createAddFormTemplate() {
           </section>
         </section>
       </form>
-    </li>`
+    </li>
+    `
   );
 }
 
 export default class AddPointView {
   getTemplate() {
-    return createAddFormTemplate();
+    return createAddPointTemplate();
   }
 
   getElement() {
     if (!this.element) {
-      this.element = createElement(createElement(this.getTemplate()));
+      this.element = createElement(this.getTemplate());
     }
 
     return this.element;
   }
 
-  removeElement() {
+  remove() {
     this.element = null;
   }
 }

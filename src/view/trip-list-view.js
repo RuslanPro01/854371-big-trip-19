@@ -1,14 +1,17 @@
 import {createElement} from '../render.js';
 
-function createEventAddBtnView() {
+function createTripListTemplate() {
   return (
-    '<button class="trip-main__event-add-btn  btn  btn--big  btn--yellow" type="button">New event</button>'
+    `
+    <ul class="trip-events__list">
+    </ul>
+    `
   );
 }
 
-export default class EventAddBtnView {
+export default class TripListView {
   getTemplate() {
-    return createEventAddBtnView();
+    return createTripListTemplate();
   }
 
   getElement() {
@@ -19,7 +22,7 @@ export default class EventAddBtnView {
     return this.element;
   }
 
-  removeElement() {
+  remove() {
     this.element = null;
   }
 }
