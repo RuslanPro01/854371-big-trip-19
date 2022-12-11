@@ -22,7 +22,7 @@ export default class TripPresenter {
     render(this.tripSortView, this.tripEventsContainer);
     render(this.tripListView, this.tripEventsContainer);
     render(new AddPointView(), this.tripListView.getElement());
-    for (let i = 3; i > 0; i--) {
+    for (let i = 0; i < 3; i++) {
       render(new PointView(), this.tripListView.getElement());
     }
     render(new EditPointView(), this.tripListView.getElement());
