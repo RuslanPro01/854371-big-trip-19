@@ -6,12 +6,12 @@ const getRandomNumber = (number) => Math.round(Math.random() * number);
 let dateFrom = '';
 const RandomPointDate = {
   GET_DATE_FROM() {
-    dateFrom = dayjs().subtract(getRandomNumber(8), 'days');
+    dateFrom = dayjs().subtract(getRandomNumber(8), 'days').subtract(getRandomNumber(1000), 'minute');
 
     return dateFrom.toISOString();
   },
   GET_DATE_TO() {
-    return dateFrom.add(getRandomNumber(MAX_OFFER_PRICE), 'day').toISOString();
+    return dateFrom.add(getRandomNumber(MAX_OFFER_PRICE), 'day').add(getRandomNumber(1000), 'minute').toISOString();
   }
 };
 
