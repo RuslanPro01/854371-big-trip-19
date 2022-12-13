@@ -6,6 +6,15 @@ const CITY_DESCRIPTIONS = ['lorem mollis aliquam ut porttitor leo a diam sollici
 const CITIES = ['Toronto', 'Quebec', 'Vancouver', 'Calgary', 'Ottawa', 'Montreal', 'Victoria', 'St. John\'s', 'Charlottetown', 'Saskatoon', 'Whitehorse', 'Halifax'];
 const OFFERS_DESCRIPTIONS = ['Add luggage', 'Switch to comfort class', 'Add meal', 'Choose seats', 'Travel by train'];
 
+const DateFormat = {
+  HUMANIZE: 'MMM D',
+  INTERNATIONAL: 'YYYY-MM-DD',
+  SHORT_TIME: 'm[M]',
+  AVERAGE_TIME: 'HH[H] mm[M]',
+  LURGE_TIME: 'DD[D] HH[H] mm[M]',
+  LOCAL_TIME: 'HH:mm'
+};
+
 export {
   MAX_PRICE,
   MAX_OFFER_PRICE,
@@ -13,5 +22,6 @@ export {
   POINT_TYPES,
   CITY_DESCRIPTIONS,
   CITIES,
-  OFFERS_DESCRIPTIONS
+  OFFERS_DESCRIPTIONS,
+  DateFormat
 };

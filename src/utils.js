@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
-import {MAX_OFFER_PRICE} from './const.js';
+import {
+  DateFormat,
+  MAX_OFFER_PRICE
+} from './const.js';
 
 const getRandomPrice = (maxPrice) => Math.floor(Math.random() * maxPrice / 100) * 100;
 const getRandomNumber = (number) => Math.round(Math.random() * number);
@@ -19,10 +22,13 @@ const getRandomArrayElement = (array) => array[getRandomNumber(array.length - 1)
 
 const getRandomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
 
+const getFormatDate = (date, format = DateFormat.HUMANIZE) => date ? dayjs(date).format(format) : '';
+
 export {
   getRandomPrice,
   getRandomArrayElement,
   RandomPointDate,
   getRandomNumber,
-  getRandomIntFromInterval
+  getRandomIntFromInterval,
+  getFormatDate
 };
