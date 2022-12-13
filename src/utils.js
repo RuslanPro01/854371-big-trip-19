@@ -17,9 +17,12 @@ const RandomPointDate = {
 
 const getRandomArrayElement = (array) => array[getRandomNumber(array.length - 1)];
 
+const getRandomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+
 export {
   getRandomPrice,
   getRandomArrayElement,
   RandomPointDate,
-  getRandomNumber
+  getRandomNumber,
+  getRandomIntFromInterval
 };
