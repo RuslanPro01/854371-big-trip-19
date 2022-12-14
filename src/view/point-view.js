@@ -51,12 +51,14 @@ function createPointTemplate(point) {
 }
 
 export default class PointView {
-  constructor({point}) {
+  constructor({point, destinations, offers}) {
     this.point = point;
+    this.destinations = destinations;
+    this.offers = offers;
   }
 
   getTemplate() {
-    return createPointTemplate(this.point);
+    return createPointTemplate(this.point, this.destinations, this.offers);
   }
 
   getElement() {
