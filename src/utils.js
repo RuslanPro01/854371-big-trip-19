@@ -18,13 +18,13 @@ const RandomPointDate = {
   }
 };
 
+const makeCapitalizeFirstLetter = (string) => string.charAt(0).toLowerCase() + string.slice(1);
 const getRandomArrayElement = (array) => array[getRandomNumber(array.length - 1)];
-
 const getRandomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
-
 const getFormatDate = (date, format = DateFormat.HUMANIZE) => date ? dayjs(date).format(format) : '';
 
 export {
+  makeCapitalizeFirstLetter,
   getRandomPrice,
   getRandomArrayElement,
   RandomPointDate,
