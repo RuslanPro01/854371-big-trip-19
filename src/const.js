@@ -9,10 +9,22 @@ const OFFERS_DESCRIPTIONS = ['Add luggage', 'Switch to comfort class', 'Add meal
 const DateFormat = {
   HUMANIZE: 'MMM D',
   INTERNATIONAL: 'YYYY-MM-DD',
+  INTERNATIONAL_WITH_TIME: 'DD/MM/YY HH:mm',
   SHORT_TIME: 'm[M]',
   AVERAGE_TIME: 'HH[H] mm[M]',
   LURGE_TIME: 'DD[D] HH[H] mm[M]',
   LOCAL_TIME: 'HH:mm'
+};
+
+const Minutes = {
+  IN_HOUR: 60,
+  IN_DAY: 1140,
+};
+
+const TimeUnits = {
+  DAY: 'day',
+  HOUR: 'hour',
+  MINUTE: 'minute'
 };
 
 export {
@@ -23,5 +35,7 @@ export {
   CITY_DESCRIPTIONS,
   CITIES,
   OFFERS_DESCRIPTIONS,
-  DateFormat
+  DateFormat,
+  TimeUnits,
+  Minutes
 };
