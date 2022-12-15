@@ -1,11 +1,32 @@
 import {createElement} from '../render.js';
-import {getFormatDate} from '../utils.js';
+import {
+  getFormatDate,
+  makeCapitalizeFirstLetter
+} from '../utils.js';
 import {DateFormat} from '../const.js';
 
-function createPointTemplate(point) {
-  const {basePrice, dayFrom, dayTo, isFavorite, type} = point;
+function createPointTemplate(point, destinations, allOffers) {
+  const {basePrice, dayFrom, dayTo, offers, isFavorite, type, id} = point;
+  const pointTypeOffer = allOffers.find((offer) => offer.type === type);
+  const pointDestination = destinations.find((destination) => destination.id === id);
+  const {name} = pointDestination;
+  let offersByType = [...pointTypeOffer.offers];
+
+  offersByType = offersByType.map((offer) => {
+    if (offers.includes(offer.id)) {
+      return `
+      <li class="event__offer">
+        <span class="event__offer-title">${offer.title}</span>
+        &plus;&euro;&nbsp;
+        <span class="event__offer-price">${offer.price}</span>
+      </li>`;
+    } else {
+      return '';
+    }
+  }).join('');
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
+  //console.log(getHumanizeDiffTime(dayTo, dayFrom));
 
   return (
     `
@@ -15,7 +36,7 @@ function createPointTemplate(point) {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event ${type} icon">
         </div>
-        <h3 class="event__title">Taxi Amsterdam</h3>
+        <h3 class="event__title">${makeCapitalizeFirstLetter(type)} ${name}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${dayFrom}">${getFormatDate(dayFrom, DateFormat.LOCAL_TIME)}</time>
@@ -29,11 +50,7 @@ function createPointTemplate(point) {
         </p>
         <h4 class="visually-hidden">Offers:</h4>
         <ul class="event__selected-offers">
-          <li class="event__offer">
-            <span class="event__offer-title">Order Uber</span>
-            &plus;&euro;&nbsp;
-            <span class="event__offer-price">20</span>
-          </li>
+          ${offersByType}
         </ul>
         <button class="event__favorite-btn" type="button">
           <span class="visually-hidden">Add to favorite</span>
