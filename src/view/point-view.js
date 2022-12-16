@@ -1,6 +1,7 @@
 import {createElement} from '../render.js';
 import {
   getFormatDate,
+  getHumanizeDiffTime,
   makeCapitalizeFirstLetter
 } from '../utils.js';
 import {DateFormat} from '../const.js';
@@ -26,7 +27,6 @@ function createPointTemplate(point, destinations, allOffers) {
   }).join('');
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
-  //console.log(getHumanizeDiffTime(dayTo, dayFrom));
 
   return (
     `
@@ -43,7 +43,7 @@ function createPointTemplate(point, destinations, allOffers) {
             &mdash;
             <time class="event__end-time" datetime="${dayTo}">${getFormatDate(dayTo, DateFormat.LOCAL_TIME)}</time>
           </p>
-          <p class="event__duration">30M</p>
+          <p class="event__duration">${getHumanizeDiffTime(dayTo, dayFrom)}</p>
         </div>
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
