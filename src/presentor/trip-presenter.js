@@ -34,6 +34,10 @@ export default class TripPresenter {
         offers: this.offers
       }), this.tripListView.getElement());
     }
-    render(new EditPointView(), this.tripListView.getElement());
+    render(new EditPointView({
+      point: this.points[3],
+      destinations: this.destinations,
+      offers: this.offers
+    }), this.tripListView.getElement());
   }
 }
