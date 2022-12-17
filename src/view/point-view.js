@@ -8,23 +8,27 @@ import {DateFormat} from '../const.js';
 
 function createPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, offers, isFavorite, type, id} = point;
-  const pointTypeOffer = allOffers.find((offer) => offer.type === type);
+  const pointTypeOffer = allOffers ? allOffers.find((offer) => offer.type === type) : '';
   const pointDestination = destinations.find((destination) => destination.id === id);
-  const {name} = pointDestination;
-  let offersByType = [...pointTypeOffer.offers];
+  const {name = ''} = pointDestination;
+  let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
 
-  offersByType = offersByType.map((offer) => {
-    if (offers.includes(offer.id)) {
-      return `
+  if (!offersByType) {
+    offersByType = '';
+  } else {
+    offersByType = offersByType.map((offer) => {
+      if (offers.includes(offer.id)) {
+        return `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>`;
-    } else {
-      return '';
-    }
-  }).join('');
+      } else {
+        return '';
+      }
+    }).join('');
+  }
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 

@@ -6,12 +6,15 @@ function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, id, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
   const pointDestination = destinations.find((destination) => destination.id === id);
-  const {description, name} = pointDestination;
-  let offersByType = [...pointTypeOffer.offers];
+  const {description = '', name = ''} = pointDestination;
+  let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
 
-  offersByType = offersByType.map((offer) => {
-    const checkedClass = offers.includes(offer.id) ? 'checked' : '';
-    return `
+  if (!offersByType) {
+    offersByType = '';
+  } else {
+    offersByType = offersByType.map((offer) => {
+      const checkedClass = offers.includes(offer.id) ? 'checked' : '';
+      return `
     <div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${checkedClass}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
@@ -20,7 +23,8 @@ function createEditPointTemplate(point, destinations, allOffers) {
         <span class="event__offer-price">${offer.price}</span>
       </label>
     </div>`;
-  }).join('');
+    }).join('');
+  }
 
   return (
     `
