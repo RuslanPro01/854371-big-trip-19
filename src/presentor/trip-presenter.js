@@ -25,6 +25,10 @@ export default class TripPresenter {
   }
 
   init() {
+    this.#installEnvironmentTemplate();
+  }
+
+  #installEnvironmentTemplate() {
     this.#points = [...this.#pointsModel.points];
     this.#destinations = [...this.#pointsModel.destinations];
     this.#offers = [...this.#pointsModel.offers];
