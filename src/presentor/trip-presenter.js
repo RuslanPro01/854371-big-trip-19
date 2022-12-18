@@ -58,10 +58,27 @@ export default class TripPresenter {
       pointEditComponent.element.replaceWith(pointComponent.element);
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', replacePointToForm);
+    const onOpenEditFormEscKeyDown = (evt) => {
+      if (evt.key === 'Esc' || evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceFormToPoint();
+        document.removeEventListener('keydown', onOpenEditFormEscKeyDown);
+      }
+    };
+
+    // const
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replacePointToForm();
+      document.addEventListener('keydown', onOpenEditFormEscKeyDown);
+    });
 
     pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
       evt.preventDefault();
+      replaceFormToPoint();
+    });
+
+    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       replaceFormToPoint();
     });
 
