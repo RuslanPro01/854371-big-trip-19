@@ -2,7 +2,6 @@ import {render} from '../render.js';
 import TripFiltersView from '../view/trip-filters-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripListView from '../view/trip-list-view.js';
-import AddPointView from '../view/add-point-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 
@@ -33,18 +32,39 @@ export default class TripPresenter {
     render(this.#tripFiltersView, this.#filtersContainer);
     render(this.#tripSortView, this.#tripEventsContainer);
     render(this.#tripListView, this.#tripEventsContainer);
-    render(new AddPointView(), this.#tripListView.element);
-    for (let i = 0; i < 3; i++) {
-      render(new PointView({
-        point: this.#points[i],
-        destinations: this.#destinations,
-        offers: this.#offers
-      }), this.#tripListView.element);
+    for (let i = 0; i < 5; i++) {
+      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
     }
-    render(new EditPointView({
-      point: this.#points[3],
-      destinations: this.#destinations,
-      offers: this.#offers
-    }), this.#tripListView.element);
+  }
+
+  #renderPoint(point, destinations, offers) {
+    const pointComponent = new PointView({
+      point: point,
+      destinations: destinations,
+      offers: offers
+    });
+    const pointEditComponent = new EditPointView({
+      point: point,
+      destinations: destinations,
+      offers: offers
+    });
+
+    const replacePointToForm = () => {
+      pointComponent.element.replaceWith(pointEditComponent.element);
+      // this.#tripListView.element.replaceChild(pointComponent.element, pointEditComponent.element);
+    };
+
+    const replaceFormToPoint = () => {
+      pointEditComponent.element.replaceWith(pointComponent.element);
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', replacePointToForm);
+
+    pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
+      evt.preventDefault();
+      replaceFormToPoint();
+    });
+
+    render(pointComponent, this.#tripListView.element);
   }
 }
