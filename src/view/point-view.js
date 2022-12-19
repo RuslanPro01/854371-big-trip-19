@@ -8,23 +8,27 @@ import {DateFormat} from '../const.js';
 
 function createPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, offers, isFavorite, type, id} = point;
-  const pointTypeOffer = allOffers.find((offer) => offer.type === type);
+  const pointTypeOffer = allOffers ? allOffers.find((offer) => offer.type === type) : '';
   const pointDestination = destinations.find((destination) => destination.id === id);
-  const {name} = pointDestination;
-  let offersByType = [...pointTypeOffer.offers];
+  const {name = ''} = pointDestination;
+  let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
 
-  offersByType = offersByType.map((offer) => {
-    if (offers.includes(offer.id)) {
-      return `
+  if (!offersByType) {
+    offersByType = '';
+  } else {
+    offersByType = offersByType.map((offer) => {
+      if (offers.includes(offer.id)) {
+        return `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
       </li>`;
-    } else {
-      return '';
-    }
-  }).join('');
+      } else {
+        return '';
+      }
+    }).join('');
+  }
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';
 
@@ -68,25 +72,29 @@ function createPointTemplate(point, destinations, allOffers) {
 }
 
 export default class PointView {
+  #element = null;
+  #point = null;
+  #destinations = null;
+  #offers = null;
   constructor({point, destinations, offers}) {
-    this.point = point;
-    this.destinations = destinations;
-    this.offers = offers;
+    this.#point = point;
+    this.#destinations = destinations;
+    this.#offers = offers;
   }
 
-  getTemplate() {
-    return createPointTemplate(this.point, this.destinations, this.offers);
+  get template() {
+    return createPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   remove() {
-    this.element = null;
+    this.#element = null;
   }
 }
