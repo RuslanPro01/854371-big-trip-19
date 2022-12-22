@@ -4,6 +4,7 @@ import TripSortView from '../view/trip-sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
+import TripListEmptyView from '../view/trip-list-empty-view.js';
 
 export default class TripPresenter {
   #filtersContainer = null;
@@ -13,6 +14,7 @@ export default class TripPresenter {
   #tripFiltersView = new TripFiltersView();
   #tripSortView = new TripSortView();
   #tripListView = new TripListView();
+  #tripListEmptyView = new TripListEmptyView();
 
   #points = [];
   #destinations = [];
@@ -29,15 +31,19 @@ export default class TripPresenter {
   }
 
   #installEnvironmentTemplate() {
-    this.#points = [...this.#pointsModel.points];
-    this.#destinations = [...this.#pointsModel.destinations];
-    this.#offers = [...this.#pointsModel.offers];
+    if (this.#pointsModel.points) {
+      this.#points = [...this.#pointsModel.points];
+      this.#destinations = [...this.#pointsModel.destinations];
+      this.#offers = [...this.#pointsModel.offers];
 
-    render(this.#tripFiltersView, this.#filtersContainer);
-    render(this.#tripSortView, this.#tripEventsContainer);
-    render(this.#tripListView, this.#tripEventsContainer);
-    for (let i = 0; i < 5; i++) {
-      this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+      render(this.#tripFiltersView, this.#filtersContainer);
+      render(this.#tripSortView, this.#tripEventsContainer);
+      render(this.#tripListView, this.#tripEventsContainer);
+      for (let i = 0; i < 5; i++) {
+        this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
+      }
+    } else {
+      render(this.#tripListEmptyView, this.#tripEventsContainer);
     }
   }
 
@@ -55,7 +61,6 @@ export default class TripPresenter {
 
     const replacePointToForm = () => {
       pointComponent.element.replaceWith(pointEditComponent.element);
-      // this.#tripListView.element.replaceChild(pointComponent.element, pointEditComponent.element);
     };
 
     const replaceFormToPoint = () => {
@@ -69,8 +74,6 @@ export default class TripPresenter {
         document.removeEventListener('keydown', onOpenEditFormEscKeyDown);
       }
     };
-
-    // const
 
     pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
       replacePointToForm();
