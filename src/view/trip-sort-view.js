@@ -1,4 +1,4 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createTripSortTemplate() {
   return (
@@ -31,22 +31,8 @@ function createTripSortTemplate() {
   );
 }
 
-export default class TripSortView {
-  #element = null;
-
+export default class TripSortView extends AbstractView {
   get template() {
     return createTripSortTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  remove() {
-    this.#element = null;
   }
 }
