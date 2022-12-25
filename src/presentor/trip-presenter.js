@@ -48,46 +48,39 @@ export default class TripPresenter {
   }
 
   #renderPoint(point, destinations, offers) {
-    const pointComponent = new PointView({
-      point: point,
-      destinations: destinations,
-      offers: offers
-    });
-    const pointEditComponent = new EditPointView({
-      point: point,
-      destinations: destinations,
-      offers: offers
-    });
-
-    const replacePointToForm = () => {
-      pointComponent.element.replaceWith(pointEditComponent.element);
-    };
-
-    const replaceFormToPoint = () => {
-      pointEditComponent.element.replaceWith(pointComponent.element);
-    };
-
     const onOpenEditFormEscKeyDown = (evt) => {
       if (evt.key === 'Esc' || evt.key === 'Escape') {
         evt.preventDefault();
-        replaceFormToPoint();
+        replaceFormToPoint.call(this);
         document.removeEventListener('keydown', onOpenEditFormEscKeyDown);
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replacePointToForm();
-      document.addEventListener('keydown', onOpenEditFormEscKeyDown);
+    const pointComponent = new PointView({
+      point: point,
+      destinations: destinations,
+      offers: offers,
+      onClick: () => {
+        replacePointToForm.call(this);
+        document.addEventListener('keydown', onOpenEditFormEscKeyDown);
+      }
+    });
+    const pointEditComponent = new EditPointView({
+      point: point,
+      destinations: destinations,
+      offers: offers,
+      onClick: () => {
+        replaceFormToPoint.call(this);
+      }
     });
 
-    pointEditComponent.element.querySelector('.event--edit').addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replaceFormToPoint();
-    });
+    function replacePointToForm() {
+      pointComponent.element.replaceWith(pointEditComponent.element);
+    }
 
-    pointEditComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replaceFormToPoint();
-    });
+    function replaceFormToPoint() {
+      pointEditComponent.element.replaceWith(pointComponent.element);
+    }
 
     render(pointComponent, this.#tripListView.element);
   }
