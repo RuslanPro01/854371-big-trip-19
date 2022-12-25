@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
 import {getFormatDate} from '../utils.js';
 import {DateFormat} from '../const.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, id, offers} = point;
@@ -145,30 +145,31 @@ function createEditPointTemplate(point, destinations, allOffers) {
   );
 }
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
   #point = null;
   #destinations = null;
   #offers = null;
-  constructor({point, destinations, offers}) {
+  #handleClick = null;
+  constructor({point, destinations, offers, onClick}) {
+    super();
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#handleClick = onClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditPointComponentClick);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
   }
 
   get template() {
     return createEditPointTemplate(this.#point, this.#destinations, this.#offers);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  #onEditPointComponentClick = () => {
+    this.#handleClick();
+  };
 
-    return this.#element;
-  }
-
-  remove() {
-    this.#element = null;
-  }
+  #onEditPointComponentSubmit = (evt) => {
+    evt.preventDefault();
+    this.#handleClick();
+  };
 }
