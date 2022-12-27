@@ -5,6 +5,7 @@ import TripListView from '../view/trip-list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
+import {NUMBER_POINTS_CREATED} from '../const.js';
 
 export default class TripPresenter {
   #filtersContainer = null;
@@ -39,7 +40,7 @@ export default class TripPresenter {
       render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripSortView, this.#tripEventsContainer);
       render(this.#tripListView, this.#tripEventsContainer);
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
         this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
       }
     } else {
