@@ -4,7 +4,7 @@ import {
   getRandomPrice,
   getRandomArrayElement,
   getRandomIntFromInterval
-} from '../utils.js';
+} from '../utils/utils-mock.js';
 import {
   MAX_PRICE,
   NUMBER_POINTS_CREATED,
