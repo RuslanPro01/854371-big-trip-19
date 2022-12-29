@@ -11,8 +11,8 @@ export default class TripPresenter {
   #filtersContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
+  #tripFiltersView = null;
 
-  #tripFiltersView = new TripFiltersView();
   #tripSortView = new TripSortView();
   #tripListView = new TripListView();
   #tripListEmptyView = new TripListEmptyView();
@@ -36,6 +36,8 @@ export default class TripPresenter {
       this.#points = [...this.#pointsModel.points];
       this.#destinations = [...this.#pointsModel.destinations];
       this.#offers = [...this.#pointsModel.offers];
+
+      this.#tripFiltersView = new TripFiltersView({points: this.#points});
 
       render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripSortView, this.#tripEventsContainer);
