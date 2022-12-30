@@ -6,7 +6,7 @@ import {
 import {
   getRandomArrayElement,
   getRandomNumber
-} from '../utils.js';
+} from '../utils/utils-mock.js';
 
 let destinationId = 1;
 const createDestination = () => ({

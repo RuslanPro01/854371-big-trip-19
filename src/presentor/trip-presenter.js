@@ -5,13 +5,14 @@ import TripListView from '../view/trip-list-view.js';
 import PointView from '../view/point-view.js';
 import EditPointView from '../view/edit-point-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
+import {NUMBER_POINTS_CREATED} from '../const.js';
 
 export default class TripPresenter {
   #filtersContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
+  #tripFiltersView = null;
 
-  #tripFiltersView = new TripFiltersView();
   #tripSortView = new TripSortView();
   #tripListView = new TripListView();
   #tripListEmptyView = new TripListEmptyView();
@@ -36,10 +37,12 @@ export default class TripPresenter {
       this.#destinations = [...this.#pointsModel.destinations];
       this.#offers = [...this.#pointsModel.offers];
 
+      this.#tripFiltersView = new TripFiltersView({points: this.#points});
+
       render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripSortView, this.#tripEventsContainer);
       render(this.#tripListView, this.#tripEventsContainer);
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
         this.#renderPoint(this.#points[i], this.#destinations, this.#offers);
       }
     } else {

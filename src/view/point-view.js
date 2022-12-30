@@ -1,10 +1,12 @@
 import {
   getFormatDate,
-  getHumanizeDiffTime,
-  makeCapitalizeFirstLetter
-} from '../utils.js';
+} from '../utils/common-utils.js';
 import {DateFormat} from '../const.js';
 import AbstractView from '../framework/view/abstract-view.js';
+import {
+  getHumanizeDiffTime,
+  makeCapitalizeFirstLetter
+} from '../utils/utils-point-view.js';
 
 function createPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, offers, isFavorite, type, id} = point;
