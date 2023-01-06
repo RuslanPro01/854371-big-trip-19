@@ -5,6 +5,7 @@ import TripListView from '../view/trip-list-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import {NUMBER_POINTS_CREATED} from '../const.js';
+import {updateItem} from '../utils/common-utils.js';
 
 export default class TripPresenter {
   #filtersContainer = null;
@@ -16,6 +17,7 @@ export default class TripPresenter {
   #tripListView = new TripListView();
   #tripListEmptyView = new TripListEmptyView();
   #pointPresenter = null;
+  #pointPresenters = new Map();
 
   #points = [];
   #destinations = [];
@@ -48,9 +50,20 @@ export default class TripPresenter {
           tripListView: this.#tripListView
         });
         this.#pointPresenter.init(this.#points[i]);
+        this.#pointPresenters.set(this.#points[i].id, this.#points[i]);
       }
     } else {
       render(this.#tripListEmptyView, this.#tripEventsContainer);
     }
+  }
+
+  #handlePointChange = (updatePoint) => {
+    this.#points = updateItem(this.#pointPresenters, updatePoint);
+    this.#pointPresenters.get(updatePoint.id).init(updatePoint);
+  };
+
+  #clearPointsList() {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
   }
 }
