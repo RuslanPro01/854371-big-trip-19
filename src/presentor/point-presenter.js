@@ -5,6 +5,7 @@ import {
   replace,
   remove
 } from '../framework/render.js';
+import {Mode} from '../const.js';
 
 export default class PointPresenter {
   #point = null;
@@ -14,12 +15,16 @@ export default class PointPresenter {
   #pointComponent = null;
   #editPointComponent = null;
   #handleDataChange = null;
+  #handleModeChange = null;
 
-  constructor({destinations, offer, tripListView, onDataChange}) {
+  #mode = Mode.DEFAULT;
+
+  constructor({destinations, offer, tripListView, onDataChange, onModeChange}) {
     this.#destinations = destinations;
     this.#offers = offer;
     this.#tripListContainer = tripListView.element;
     this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point) {
@@ -56,18 +61,22 @@ export default class PointPresenter {
       return;
     }
 
-    // Проверка на наличие в DOM необходима,
-    // чтобы не пытаться заменить то, что не было отрисовано
-    if (this.#tripListContainer.contains(pointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace(this.#pointComponent, pointComponent);
     }
 
-    if (this.#tripListContainer.contains(editPointComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace(this.#pointComponent, editPointComponent);
     }
 
     remove(pointComponent);
     remove(editPointComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToPoint();
+    }
   }
 
   destroy() {
@@ -77,10 +86,13 @@ export default class PointPresenter {
 
   #replacePointToForm() {
     this.#pointComponent.element.replaceWith(this.#editPointComponent.element);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToPoint() {
     this.#editPointComponent.element.replaceWith(this.#pointComponent.element);
+    this.#mode = Mode.DEFAULT;
   }
 
   #onOpenEditFormEscKeyDown = (evt) => {

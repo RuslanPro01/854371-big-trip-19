@@ -27,6 +27,11 @@ const TimeUnits = {
   SECOND: 'second'
 };
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export {
   MAX_PRICE,
   MAX_OFFER_PRICE,
@@ -36,5 +41,6 @@ export {
   CITIES,
   DateFormat,
   TimeUnits,
-  Minutes
+  Minutes,
+  Mode
 };
