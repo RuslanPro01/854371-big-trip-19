@@ -13,11 +13,13 @@ export default class PointPresenter {
   #tripListContainer = null;
   #pointComponent = null;
   #editPointComponent = null;
+  #handleDataChange = null;
 
-  constructor({destinations, offer, tripListView}) {
+  constructor({destinations, offer, tripListView, onDataChange}) {
     this.#destinations = destinations;
     this.#offers = offer;
     this.#tripListContainer = tripListView.element;
+    this.#handleDataChange = onDataChange;
   }
 
   init(point) {
@@ -36,7 +38,8 @@ export default class PointPresenter {
       onClick: () => {
         this.#replacePointToForm.call(this);
         document.addEventListener('keydown', this.#onOpenEditFormEscKeyDown);
-      }
+      },
+      onFavoriteButtonClick: this.#handleFavoriteClick
     });
 
     this.#editPointComponent = new EditPointView({
@@ -86,5 +89,9 @@ export default class PointPresenter {
       this.#replaceFormToPoint.call(this);
       document.removeEventListener('keydown', this.#onOpenEditFormEscKeyDown);
     }
+  };
+
+  #handleFavoriteClick = () => {
+    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
   };
 }

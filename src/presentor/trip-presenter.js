@@ -47,10 +47,11 @@ export default class TripPresenter {
         this.#pointPresenter = new PointPresenter({
           offer: this.#offers,
           destinations: this.#destinations,
-          tripListView: this.#tripListView
+          tripListView: this.#tripListView,
+          onDataChange: this.#handlePointChange
         });
         this.#pointPresenter.init(this.#points[i]);
-        this.#pointPresenters.set(this.#points[i].id, this.#points[i]);
+        this.#pointPresenters.set(this.#points[i].id, this.#pointPresenter);
       }
     } else {
       render(this.#tripListEmptyView, this.#tripEventsContainer);
@@ -58,7 +59,7 @@ export default class TripPresenter {
   }
 
   #handlePointChange = (updatePoint) => {
-    this.#points = updateItem(this.#pointPresenters, updatePoint);
+    this.#points = updateItem(this.#points, updatePoint);
     this.#pointPresenters.get(updatePoint.id).init(updatePoint);
   };
 
