@@ -49,7 +49,6 @@ export default class TripSortView extends AbstractView {
       return;
     }
 
-    evt.preventDefault();
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
 }
