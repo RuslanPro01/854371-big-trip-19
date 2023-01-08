@@ -4,8 +4,15 @@ import TripSortView from '../view/trip-sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
-import {NUMBER_POINTS_CREATED} from '../const.js';
+import {
+  NUMBER_POINTS_CREATED,
+  SortType
+} from '../const.js';
 import {updateItem} from '../utils/common-utils.js';
+import {
+  sortPriceDown,
+  sortTimeDown
+} from '../utils/utils-point-view.js';
 
 export default class TripPresenter {
   #filtersContainer = null;
@@ -22,6 +29,8 @@ export default class TripPresenter {
   #points = [];
   #destinations = [];
   #offers = [];
+  #currentSortType = SortType.DEFAULT;
+  #sourcedPoints = [];
 
   constructor({filtersContainer, tripEventsContainer, pointsModel}) {
     this.#filtersContainer = filtersContainer;
@@ -36,6 +45,7 @@ export default class TripPresenter {
   #installEnvironmentTemplate() {
     if (this.#pointsModel.points) {
       this.#points = [...this.#pointsModel.points];
+      this.#sourcedPoints = [...this.#pointsModel.points];
       this.#destinations = [...this.#pointsModel.destinations];
       this.#offers = [...this.#pointsModel.offers];
       this.#tripFiltersView = new TripFiltersView({points: this.#points});
@@ -48,7 +58,7 @@ export default class TripPresenter {
           destinations: this.#destinations,
           tripListView: this.#tripListView,
           onDataChange: this.#handlePointChange,
-          onModeChange: this.#handleModChange,
+          onModeChange: this.#handleModChange
         });
         this.#pointPresenter.init(this.#points[i]);
         this.#pointPresenters.set(this.#points[i].id, this.#pointPresenter);
@@ -64,11 +74,31 @@ export default class TripPresenter {
 
   #handlePointChange = (updatePoint) => {
     this.#points = updateItem(this.#points, updatePoint);
+    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatePoint);
     this.#pointPresenters.get(updatePoint.id).init(updatePoint);
   };
 
+  #sortPoints(sortType) {
+    switch (sortType) {
+      case SortType.PRICE:
+        this.#points.sort(sortPriceDown);
+        break;
+      case SortType.DURATION:
+        this.#points.sort(sortTimeDown);
+        break;
+      default:
+        this.#points = [...this.#sourcedPoints];
+    }
+
+    this.#currentSortType = sortType;
+  }
+
   #handleSortTypeChange = (sortType) => {
-    // - Сортируем задачи
+    if (sortType === this.#currentSortType) {
+      return;
+    }
+
+    this.#sortPoints(sortType);
     // - Очищаем список
     // - Рендерим список заново
   };
