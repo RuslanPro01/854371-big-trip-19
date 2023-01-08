@@ -45,7 +45,7 @@ export default class TripSortView extends AbstractView {
   }
 
   #sortTypeChangeHandler = (evt) => {
-    if (!evt.target.className.contains('trip-sort__btn')) {
+    if (!evt.target.classList.contains('trip-sort__btn')) {
       return;
     }
 

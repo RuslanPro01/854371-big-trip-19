@@ -51,20 +51,25 @@ export default class TripPresenter {
       this.#tripFiltersView = new TripFiltersView({points: this.#points});
 
       render(this.#tripFiltersView, this.#filtersContainer);
+      this.#renderSort();
       render(this.#tripListView, this.#tripEventsContainer);
-      for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
-        this.#pointPresenter = new PointPresenter({
-          offer: this.#offers,
-          destinations: this.#destinations,
-          tripListView: this.#tripListView,
-          onDataChange: this.#handlePointChange,
-          onModeChange: this.#handleModChange
-        });
-        this.#pointPresenter.init(this.#points[i]);
-        this.#pointPresenters.set(this.#points[i].id, this.#pointPresenter);
-      }
+      this.#renderPoints();
     } else {
       render(this.#tripListEmptyView, this.#tripEventsContainer);
+    }
+  }
+
+  #renderPoints() {
+    for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
+      this.#pointPresenter = new PointPresenter({
+        offer: this.#offers,
+        destinations: this.#destinations,
+        tripListView: this.#tripListView,
+        onDataChange: this.#handlePointChange,
+        onModeChange: this.#handleModChange
+      });
+      this.#pointPresenter.init(this.#points[i]);
+      this.#pointPresenters.set(this.#points[i].id, this.#pointPresenter);
     }
   }
 
@@ -99,14 +104,16 @@ export default class TripPresenter {
     }
 
     this.#sortPoints(sortType);
-    // - Очищаем список
-    // - Рендерим список заново
+    this.#clearPointsList();
+    this.#renderPoints();
   };
 
   #renderSort() {
     this.#tripSortView = new TripSortView({
       onSortTypeChange: this.#handleSortTypeChange
     });
+
+    render(this.#tripSortView, this.#tripEventsContainer);
   }
 
   #clearPointsList() {
