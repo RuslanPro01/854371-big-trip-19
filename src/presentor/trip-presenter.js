@@ -13,7 +13,7 @@ export default class TripPresenter {
   #pointsModel = null;
   #tripFiltersView = null;
 
-  #tripSortView = new TripSortView();
+  #tripSortView = null;
   #tripListView = new TripListView();
   #tripListEmptyView = new TripListEmptyView();
   #pointPresenter = null;
@@ -41,7 +41,6 @@ export default class TripPresenter {
       this.#tripFiltersView = new TripFiltersView({points: this.#points});
 
       render(this.#tripFiltersView, this.#filtersContainer);
-      render(this.#tripSortView, this.#tripEventsContainer);
       render(this.#tripListView, this.#tripEventsContainer);
       for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
         this.#pointPresenter = new PointPresenter({
@@ -67,6 +66,18 @@ export default class TripPresenter {
     this.#points = updateItem(this.#points, updatePoint);
     this.#pointPresenters.get(updatePoint.id).init(updatePoint);
   };
+
+  #handleSortTypeChange = (sortType) => {
+    // - Сортируем задачи
+    // - Очищаем список
+    // - Рендерим список заново
+  };
+
+  #renderSort() {
+    this.#tripSortView = new TripSortView({
+      onSortTypeChange: this.#handleSortTypeChange
+    });
+  }
 
   #clearPointsList() {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
