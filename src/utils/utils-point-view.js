@@ -28,3 +28,10 @@ export const getHumanizeDiffTime = (dayTo, dayForm) => {
 
   return durationTime.format(DateFormat.LURGE_TIME);
 };
+
+export const sortPriceDown = (pointA, pointB) => pointB.basePrice - pointA.basePrice;
+
+export const sortTimeDown = (pointA, pointB) => {
+  const getPointDuration = (point) => getDifferenceConventionalUnits(point.dayTo, point.dayFrom, TimeUnits.SECOND);
+  return getPointDuration(pointB) - getPointDuration(pointA);
+};
