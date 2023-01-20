@@ -3,12 +3,13 @@ import {DateFormat} from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 function createEditPointTemplate(point, destinations, allOffers) {
-  const {basePrice, dayFrom, dayTo, type, id, offers} = point;
+  const {basePrice, dayFrom, dayTo, type, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
-  const pointDestination = destinations.find((destination) => destination.id === id);
+  const pointDestination = destinations.find((destination) => destination.id === point.destination[0]);
   const {description = '', name = ''} = pointDestination;
   let offerTypes = Object.values(allOffers).map((offer) => offer.type);
   let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
+  let cities = Object.values(destinations).map((destination) => destination.name);
 
   if (!offersByType) {
     offersByType = '';
@@ -33,7 +34,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
     capitalizeTypeOffer = capitalizeTypeOffer.join('');
     return (`
       <div class="event__type-item">
-        <input id="event-type-${typeOffer}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeOffer}" ${typeOffer === type ? 'checked' : ''}>
+        <input id="event-type-${typeOffer}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeOffer}" ${typeOffer === type ? 'checked' : ''} data-type-offer="${typeOffer}">
         <label class="event__type-label  event__type-label--${typeOffer}" for="event-type-${typeOffer}-1">${capitalizeTypeOffer}</label>
       </div>
 `);
@@ -69,10 +70,10 @@ function createEditPointTemplate(point, destinations, allOffers) {
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -122,19 +123,30 @@ export default class EditPointView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleClick = null;
+
   constructor({point, destinations, offers, onClick}) {
     super();
-    //this._state(EditPointView.parsePointToState(point));
+    this._setState(EditPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleClick = onClick;
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditPointComponentClick);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
+    this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
+    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#onEventInputDestinationChange);
   }
 
   get template() {
-    return createEditPointTemplate(this.#point, this.#destinations, this.#offers);
+    return createEditPointTemplate(this._state, this.#destinations, this.#offers);
+  }
+
+  static parsePointToState(point) {
+    return {...point};
+  }
+
+  static parseStateToPoint(state) {
+    return {...state};
   }
 
   #onEditPointComponentClick = () => {
@@ -146,11 +158,30 @@ export default class EditPointView extends AbstractStatefulView {
     this.#handleClick(EditPointView.parseStateToPoint(this._state));
   };
 
-  static parsePointToState(point) {
-    return {...point};
-  }
+  #onEventTypeWrapperClick = (evt) => {
+    const selectorType = evt.target.dataset.typeOffer;
+    if (selectorType) {
+      if (selectorType === this.#point.type) {
+        return;
+      }
+      this.updateElement({
+        type: selectorType,
+        offers: []
+      });
+    }
+  };
 
-  static parseStateToPoint(state) {
-    return {...state};
+  #onEventInputDestinationChange = (evt) => {
+    const inputValue = evt.target.value;
+    const cities = Object.values(this.#destinations).map((destination) => destination.name);
+    // TODO: Доработать перерисовку описания
+    // TODO: добавить отрисовку фото
+    this.updateElement({
+      destination: cities.some((cityName) => cityName === inputValue) ? [cities.indexOf(inputValue)] : []
+    });
+  };
+
+  _restoreHandlers() {
+    return undefined;
   }
 }

@@ -12,7 +12,7 @@ let destinationId = 1;
 const createDestination = () => ({
   id: destinationId++,
   description: getRandomArrayElement(CITY_DESCRIPTIONS),
-  name: getRandomArrayElement(CITIES),
+  name: CITIES[destinationId - 1],
   pictures: [
     {
       src: `https://loremflickr.com/248/152?random=${getRandomNumber(100000)}`,
