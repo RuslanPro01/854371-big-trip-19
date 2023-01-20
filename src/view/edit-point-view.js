@@ -36,7 +36,12 @@ function createEditPointTemplate(point, destinations, allOffers) {
         <input id="event-type-${typeOffer}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeOffer}" ${typeOffer === type ? 'checked' : ''}>
         <label class="event__type-label  event__type-label--${typeOffer}" for="event-type-${typeOffer}-1">${capitalizeTypeOffer}</label>
       </div>
-`);}).join('');
+`);
+  }).join('');
+
+  cities = cities.map((city) => (`
+  <option value="${city}" ${city === name ? 'selected' : ''}></option>
+  `)).join('');
 
   return (
     `
@@ -66,10 +71,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="${name}"></option>
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+              ${cities}
             </datalist>
           </div>
 
