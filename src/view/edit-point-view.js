@@ -141,10 +141,8 @@ export default class EditPointView extends AbstractStatefulView {
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleClick = onClick;
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditPointComponentClick);
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
-    this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
-    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#onEventInputDestinationChange);
+
+    this._restoreHandlers();
   }
 
   get template() {
@@ -183,16 +181,35 @@ export default class EditPointView extends AbstractStatefulView {
 
   #onEventInputDestinationChange = (evt) => {
     const inputValue = evt.target.value;
+    const submitFormButton = this.element.querySelector('.event__save-btn');
     if (evt.target.dataset.baseValue === inputValue) {
+      submitFormButton.disabled = false;
       return;
     }
     const cities = Object.values(this.#destinations).map((destination) => destination.name);
-    this.updateElement({
-      destination: cities.some((cityName) => cityName === inputValue) ? [cities.indexOf(inputValue) + 1] : []
+    if (cities.some((cityName) => cityName === inputValue)) {
+      this.updateElement({
+        destination: [cities.indexOf(inputValue) + 1]
+      });
+    } else {
+      submitFormButton.disabled = true;
+    }
+
+  };
+
+  #onEventInputPriceChange = (evt) => {
+    evt.preventDefault();
+    const priceValue = evt.target.value;
+    this._setState({
+      basePrice: priceValue
     });
   };
 
   _restoreHandlers() {
-    return undefined;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditPointComponentClick);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
+    this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
+    this.element.querySelector('.event__input--destination').addEventListener('blur', this.#onEventInputDestinationChange);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventInputPriceChange);
   }
 }
