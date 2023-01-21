@@ -43,6 +43,7 @@ export default class PointPresenter {
       onClick: () => {
         this.#replacePointToForm.call(this);
         document.addEventListener('keydown', this.#onOpenEditFormEscKeyDown);
+        this.#editPointComponent.reset(this.#point);
       },
       onFavoriteButtonClick: this.#handleFavoriteClick
     });
@@ -75,6 +76,7 @@ export default class PointPresenter {
 
   resetView() {
     if (this.#mode !== Mode.DEFAULT) {
+      this.#editPointComponent.reset(this.#point);
       this.#replaceFormToPoint();
     }
   }
@@ -98,6 +100,7 @@ export default class PointPresenter {
   #onOpenEditFormEscKeyDown = (evt) => {
     if (evt.key === 'Esc' || evt.key === 'Escape') {
       evt.preventDefault();
+      this.#editPointComponent.reset(this.#point);
       this.#replaceFormToPoint.call(this);
       document.removeEventListener('keydown', this.#onOpenEditFormEscKeyDown);
     }
