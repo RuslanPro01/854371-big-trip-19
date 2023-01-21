@@ -8,11 +8,13 @@ import {
   getRandomNumber
 } from '../utils/utils-mock.js';
 
-let destinationId = 1;
+const generatorId = (number = 0) => () => number++;
+const destinationId = generatorId(1);
+const gitCityNameIndex = generatorId(0);
 const createDestination = () => ({
-  id: destinationId++,
+  id: destinationId(),
   description: getRandomArrayElement(CITY_DESCRIPTIONS),
-  name: CITIES[destinationId - 1],
+  name: CITIES[gitCityNameIndex()],
   pictures: [
     {
       src: `https://loremflickr.com/248/152?random=${getRandomNumber(100000)}`,

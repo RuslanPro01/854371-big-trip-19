@@ -5,11 +5,13 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
-  const pointDestination = destinations.find((destination) => destination.id === point.destination[0]);
-  const {description = '', name = ''} = pointDestination;
+  const pointDestination = destinations.find((destination) => destination.id === point.destination[0]) ? destinations.find((destination) => destination.id === point.destination[0]) : {};
+  const {description = '', name = '', pictures = ''} = pointDestination;
+
   let offerTypes = Object.values(allOffers).map((offer) => offer.type);
   let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
   let cities = Object.values(destinations).map((destination) => destination.name);
+  let picturesPoint = [...pictures];
 
   if (!offersByType) {
     offersByType = '';
@@ -44,8 +46,11 @@ function createEditPointTemplate(point, destinations, allOffers) {
   <option value="${city}" ${city === name ? 'selected' : ''}></option>
   `)).join('');
 
-  return (
-    `
+  picturesPoint = picturesPoint.map((picture) => (`
+    <img class="event__photo" src="${picture.src}" alt="${picture.description}">
+    `)).join('');
+
+  return (`
     <li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
@@ -73,7 +78,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1" data-base-value="${name}">
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -110,12 +115,17 @@ function createEditPointTemplate(point, destinations, allOffers) {
           <section class="event__section  event__section--destination" ${!description ? 'style="display: none"' : ''}>
             <h3 class="event__section-title  event__section-title--destination">Destination</h3>
             <p class="event__destination-description">${description}</p>
+
+            <div class="event__photos-container" ${!picturesPoint ? 'style="display: none"' : ''}>
+              <div class="event__photos-tape">
+                ${picturesPoint}
+              </div>
+            </div>
           </section>
         </section>
       </form>
     </li>
-    `
-  );
+`);
 }
 
 export default class EditPointView extends AbstractStatefulView {
@@ -173,11 +183,12 @@ export default class EditPointView extends AbstractStatefulView {
 
   #onEventInputDestinationChange = (evt) => {
     const inputValue = evt.target.value;
+    if (evt.target.dataset.baseValue === inputValue) {
+      return;
+    }
     const cities = Object.values(this.#destinations).map((destination) => destination.name);
-    // TODO: Доработать перерисовку описания
-    // TODO: добавить отрисовку фото
     this.updateElement({
-      destination: cities.some((cityName) => cityName === inputValue) ? [cities.indexOf(inputValue)] : []
+      destination: cities.some((cityName) => cityName === inputValue) ? [cities.indexOf(inputValue) + 1] : []
     });
   };
 
