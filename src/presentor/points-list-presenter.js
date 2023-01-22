@@ -14,7 +14,7 @@ import {
   sortTimeDown
 } from '../utils/utils-point-view.js';
 
-export default class TripPresenter {
+export default class PointsListPresenter {
   #filtersContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
