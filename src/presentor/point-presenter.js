@@ -16,6 +16,7 @@ export default class PointPresenter {
   #editPointComponent = null;
   #handleDataChange = null;
   #handleModeChange = null;
+  #action = null;
 
   #mode = Mode.DEFAULT;
 

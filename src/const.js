@@ -37,6 +37,11 @@ const SortType = {
   PRICE: 'price'
 };
 
+const PointState = {
+  EDIT: 'edit',
+  ADD: 'add',
+};
+
 export {
   MAX_PRICE,
   NUMBER_POINTS_CREATED,
@@ -47,5 +52,6 @@ export {
   TimeUnits,
   Minutes,
   Mode,
-  SortType
+  SortType,
+  PointState
 };

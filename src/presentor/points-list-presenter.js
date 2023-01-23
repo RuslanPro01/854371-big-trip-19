@@ -13,7 +13,6 @@ import {
   sortPriceDown,
   sortTimeDown
 } from '../utils/utils-point-view.js';
-import AddPointView from '../view/add-point-view.js';
 
 export default class PointsListPresenter {
   #filtersContainer = null;
@@ -23,7 +22,6 @@ export default class PointsListPresenter {
 
   #tripSortView = null;
   #tripListView = new TripListView();
-  #tripAddPointView = null;
   #tripListEmptyView = new TripListEmptyView();
   #pointPresenter = null;
   #pointPresenters = new Map();
@@ -51,16 +49,10 @@ export default class PointsListPresenter {
       this.#destinations = [...this.#pointsModel.destinations];
       this.#offers = [...this.#pointsModel.offers];
       this.#tripFiltersView = new TripFiltersView({points: this.#points});
-      this.#tripAddPointView = new AddPointView({
-        point: this.#points[0],
-        destinations: this.#destinations,
-        offers: this.#offers
-      });
 
       render(this.#tripFiltersView, this.#filtersContainer);
       this.#renderSort();
       render(this.#tripListView, this.#tripEventsContainer);
-      render(this.#tripAddPointView, this.#tripListView.element);
       this.#renderPoints();
     } else {
       render(this.#tripListEmptyView, this.#tripEventsContainer);
