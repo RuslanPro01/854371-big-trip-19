@@ -1,3 +1,5 @@
+import {RandomPointDate} from './utils/utils-mock.js';
+
 const MAX_PRICE = 10000;
 const NUMBER_POINTS_CREATED = 10;
 const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -13,6 +15,8 @@ const DateFormat = {
   LURGE_TIME: 'DD[D] HH[H] mm[M]',
   LOCAL_TIME: 'HH:mm'
 };
+
+const DEFAULT_TRIP_TYPE = 'taxi';
 
 const Minutes = {
   IN_HOUR: 60,
@@ -42,6 +46,15 @@ const PointState = {
   ADD: 'add',
 };
 
+const BLANK_POINT = {
+  basePrice: null,
+  dateFrom: RandomPointDate.GET_DATE_FROM(),
+  dateTo: RandomPointDate.GET_DATE_TO(),
+  destination: null,
+  offers: [],
+  type: DEFAULT_TRIP_TYPE,
+};
+
 export {
   MAX_PRICE,
   NUMBER_POINTS_CREATED,
@@ -53,5 +66,6 @@ export {
   Minutes,
   Mode,
   SortType,
-  PointState
+  PointState,
+  BLANK_POINT
 };

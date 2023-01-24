@@ -13,12 +13,15 @@ import {
   sortPriceDown,
   sortTimeDown
 } from '../utils/utils-point-view.js';
+import TripCreateButtonView from '../view/trip-create-button-view.js';
 
 export default class PointsListPresenter {
+  #tripMainContainer = null;
   #filtersContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
   #tripFiltersView = null;
+  #tripCreateButtonView = new TripCreateButtonView();
 
   #tripSortView = null;
   #tripListView = new TripListView();
@@ -32,7 +35,8 @@ export default class PointsListPresenter {
   #currentSortType = SortType.DEFAULT;
   #sourcedPoints = [];
 
-  constructor({filtersContainer, tripEventsContainer, pointsModel}) {
+  constructor({tripMainContainer, filtersContainer, tripEventsContainer, pointsModel}) {
+    this.#tripMainContainer = tripMainContainer;
     this.#filtersContainer = filtersContainer;
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
@@ -51,6 +55,7 @@ export default class PointsListPresenter {
       this.#tripFiltersView = new TripFiltersView({points: this.#points});
 
       render(this.#tripFiltersView, this.#filtersContainer);
+      render(this.#tripCreateButtonView, this.#tripMainContainer);
       this.#renderSort();
       render(this.#tripListView, this.#tripEventsContainer);
       this.#renderPoints();

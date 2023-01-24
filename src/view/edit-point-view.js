@@ -1,12 +1,11 @@
 import {getFormatDate} from '../utils/common-utils.js';
 import {
-  DateFormat,
-  PointState
+  BLANK_POINT,
+  DateFormat
 } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-function createEditPointTemplate(action, point, destinations, allOffers) {
-  const isEditPoint = PointState.EDIT === action;
+function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
   const pointDestination = destinations.find((destination) => destination.id === point.destination[0]) ? destinations.find((destination) => destination.id === point.destination[0]) : {};
@@ -108,9 +107,9 @@ function createEditPointTemplate(action, point, destinations, allOffers) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${isEditPoint ? 'Cancel' : 'Delete'}</button>
+          <button class="event__reset-btn" type="reset">${'isEditPoint' ? 'Delete' : 'Cancel'}</button>
 
-          ${isEditPoint ? createCloseButton() : ''}
+          ${'isEditPoint' ? createCloseButton() : ''}
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers" ${!offersByType ? 'style="display: none"' : ''}>
@@ -142,22 +141,20 @@ export default class EditPointView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleClick = null;
-  #action = null;
 
-  constructor({action = 'edit', point, destinations, offers, onClick}) {
+  constructor({point = BLANK_POINT, destinations, offers, onClick}) {
     super();
     this._setState(EditPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#handleClick = onClick;
-    this.#action = action;
 
     this._restoreHandlers();
   }
 
   get template() {
-    return createEditPointTemplate(this.#action, this._state, this.#destinations, this.#offers);
+    return createEditPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
   static parsePointToState(point) {
