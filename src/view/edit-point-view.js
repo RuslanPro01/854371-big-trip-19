@@ -5,11 +5,12 @@ import {
 } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-function createEditPointTemplate(point, destinations, allOffers) {
+function createEditPointTemplate(point, destinations, allOffers, isEditPointFlag = true) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
   const pointDestination = destinations.find((destination) => destination.id === point.destination[0]) ? destinations.find((destination) => destination.id === point.destination[0]) : {};
   const {description = '', name = '', pictures = ''} = pointDestination;
+  const isEditPoint = isEditPointFlag;
 
   let offerTypes = Object.values(allOffers).map((offer) => offer.type);
   let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
@@ -107,9 +108,9 @@ function createEditPointTemplate(point, destinations, allOffers) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">${'isEditPoint' ? 'Delete' : 'Cancel'}</button>
+          <button class="event__reset-btn" type="reset">${isEditPoint ? 'Delete' : 'Cancel'}</button>
 
-          ${'isEditPoint' ? createCloseButton() : ''}
+          ${isEditPoint ? createCloseButton() : ''}
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers" ${!offersByType ? 'style="display: none"' : ''}>
