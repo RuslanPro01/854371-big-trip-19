@@ -47,10 +47,10 @@ const PointState = {
 };
 
 const BLANK_POINT = {
-  basePrice: null,
+  basePrice: '',
   dateFrom: RandomPointDate.GET_DATE_FROM(),
   dateTo: RandomPointDate.GET_DATE_TO(),
-  destination: null,
+  destination: [1],
   offers: [],
   type: DEFAULT_TRIP_TYPE,
 };

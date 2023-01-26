@@ -101,11 +101,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
-
-          <button class="event__rollup-btn" type="button">
-             <span class="visually-hidden">Open event</span>
-          </button>
+          <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers" ${!offersByType ? 'style="display: none"' : ''}>
@@ -132,19 +128,18 @@ function createEditPointTemplate(point, destinations, allOffers) {
 `);
 }
 
-export default class EditPointView extends AbstractStatefulView {
+export default class AddPointView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
   #handleClick = null;
 
-  constructor({point = BLANK_POINT, destinations, offers, onClick}) {
+  constructor({point = BLANK_POINT, destinations, offers}) {
     super();
-    this._setState(EditPointView.parsePointToState(point));
+    this._setState(AddPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
-    this.#handleClick = onClick;
 
     this._restoreHandlers();
   }
@@ -161,13 +156,9 @@ export default class EditPointView extends AbstractStatefulView {
     return {...state};
   }
 
-  #onEditPointComponentClick = () => {
-    this.#handleClick();
-  };
-
   #onEditPointComponentSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleClick(EditPointView.parseStateToPoint(this._state));
+    this.#handleClick(AddPointView.parseStateToPoint(this._state));
   };
 
   #onEventTypeWrapperClick = (evt) => {
@@ -211,12 +202,11 @@ export default class EditPointView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      EditPointView.parsePointToState(point),
+      AddPointView.parsePointToState(point),
     );
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#onEditPointComponentClick);
     this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
     this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onEventInputDestinationChange);
