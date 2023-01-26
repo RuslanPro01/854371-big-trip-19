@@ -133,13 +133,15 @@ export default class AddPointView extends AbstractStatefulView {
   #destinations = null;
   #offers = null;
   #handleClick = null;
+  #onCancelButtonClick = null;
 
-  constructor({point = BLANK_POINT, destinations, offers}) {
+  constructor({point = BLANK_POINT, destinations, offers, cancelButtonHandler}) {
     super();
     this._setState(AddPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
+    this.#onCancelButtonClick = cancelButtonHandler;
 
     this._restoreHandlers();
   }
@@ -164,9 +166,6 @@ export default class AddPointView extends AbstractStatefulView {
   #onEventTypeWrapperClick = (evt) => {
     const selectorType = evt.target.dataset.typeOffer;
     if (selectorType) {
-      if (selectorType === this.#point.type) {
-        return;
-      }
       this.updateElement({
         type: selectorType,
         offers: []
@@ -211,5 +210,6 @@ export default class AddPointView extends AbstractStatefulView {
     this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onEventInputDestinationChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventInputPriceChange);
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onCancelButtonClick);
   }
 }

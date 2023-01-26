@@ -1,4 +1,5 @@
 import {
+  remove,
   render,
   RenderPosition
 } from '../framework/render.js';
@@ -8,7 +9,7 @@ import TripListView from '../view/trip-list-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import {
-  BLANK_POINT,
+  BLANK_POINT, Mode,
   NUMBER_POINTS_CREATED,
   SortType
 } from '../const.js';
@@ -41,18 +42,7 @@ export default class PointsListPresenter {
   #currentSortType = SortType.DEFAULT;
   #sourcedPoints = [];
   #newPointComponent = null;
-
-  #handlerEventAddButton = (evt) => {
-    evt.target.disabled = true;
-    this.#newPointComponent = new AddPointView({
-      point: BLANK_POINT,
-      destinations: destinations,
-      offers: offers
-    });
-    render(this.#newPointComponent, this.#tripListView.element, RenderPosition.AFTERBEGIN);
-  };
-
-  #tripCreateButtonView = new TripCreateButtonView(this.#handlerEventAddButton);
+  #newPointComponentState = Mode.DEFAULT;
 
   // TripCreateButtonView => PointsListPresenter => handler (44) => createNewEditView => renderNewEditView
   constructor({tripMainContainer, filtersContainer, tripEventsContainer, pointsModel}) {
@@ -98,9 +88,33 @@ export default class PointsListPresenter {
     }
   }
 
+  #removeAddPointView = () => {
+    remove(this.#newPointComponent);
+    this.#newPointComponentState = Mode.DEFAULT;
+    this.#tripCreateButtonView.element.disabled = false;
+  };
+
   #handleModChange = () => {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
+    if (this.#newPointComponentState === Mode.EDITING) {
+      this.#removeAddPointView();
+    }
   };
+
+  #handlerEventAddButton = (evt) => {
+    evt.target.disabled = true;
+    this.#newPointComponent = new AddPointView({
+      point: BLANK_POINT,
+      destinations: destinations,
+      offers: offers,
+      cancelButtonHandler: this.#removeAddPointView
+    });
+    render(this.#newPointComponent, this.#tripListView.element, RenderPosition.AFTERBEGIN);
+    this.#handleModChange();
+    this.#newPointComponentState = Mode.EDITING;
+  };
+
+  #tripCreateButtonView = new TripCreateButtonView(this.#handlerEventAddButton);
 
   #handlePointChange = (updatePoint) => {
     this.#points = updateItem(this.#points, updatePoint);

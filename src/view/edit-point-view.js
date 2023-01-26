@@ -173,9 +173,6 @@ export default class EditPointView extends AbstractStatefulView {
   #onEventTypeWrapperClick = (evt) => {
     const selectorType = evt.target.dataset.typeOffer;
     if (selectorType) {
-      if (selectorType === this.#point.type) {
-        return;
-      }
       this.updateElement({
         type: selectorType,
         offers: []
