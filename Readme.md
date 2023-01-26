@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Руслан  Шевченко](https://up.htmlacademy.ru/ecmascript/19/user/854371).
-* Наставник: [Глеб Клецков](https://htmlacademy.ru/profile/id1487865).
+* Наставник: [Артур Галимов](https://htmlacademy.ru/profile/id1237543).
 
 ---
 
