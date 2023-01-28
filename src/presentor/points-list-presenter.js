@@ -136,13 +136,33 @@ export default class PointsListPresenter {
         this.#pointPresenters.get(update.id).init(update);
         break;
       case UpdateType.MINOR:
-        // Делаем что-то
+        this.#clearSpaceTrip();
+        this.#renderSpaceTrip();
         break;
       case UpdateType.MAJOR:
-        // Делаем что-то
+        this.#clearSpaceTrip({resetSortType: true});
+        this.#renderSpaceTrip();
         break;
     }
   };
+
+  #clearSpaceTrip({resetSortType = false} = {}) {
+    this.#pointPresenters.forEach((presenter) => presenter.destroy());
+    this.#pointPresenters.clear();
+
+    remove(this.#tripListEmptyView);
+    remove(this.#tripFiltersView);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+  }
+
+  #renderSpaceTrip() {
+    this.#tripFiltersView = new TripFiltersView({points: this.points});
+    render(this.#tripFiltersView, this.#filtersContainer);
+    this.#renderPoints();
+  }
 
   #handlerEventAddButton = (evt) => {
     evt.target.disabled = true;
@@ -174,7 +194,7 @@ export default class PointsListPresenter {
       onSortTypeChange: this.#handleSortTypeChange
     });
 
-    render(this.#tripSortView, this.#tripEventsContainer);
+    render(this.#tripSortView, this.#tripEventsContainer, RenderPosition.AFTERBEGIN);
   }
 
   #clearPointsList() {
