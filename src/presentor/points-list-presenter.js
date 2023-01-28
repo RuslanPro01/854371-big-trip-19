@@ -9,11 +9,13 @@ import TripListView from '../view/trip-list-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import {
-  BLANK_POINT, Mode,
+  BLANK_POINT,
+  Mode,
   NUMBER_POINTS_CREATED,
-  SortType
+  SortType,
+  UpdateType,
+  UserAction
 } from '../const.js';
-import {updateItem} from '../utils/common-utils.js';
 import {
   sortPriceDown,
   sortTimeDown
@@ -36,11 +38,7 @@ export default class PointsListPresenter {
   #pointPresenter = null;
   #pointPresenters = new Map();
 
-  #points = [];
-  #destinations = [];
-  #offers = [];
   #currentSortType = SortType.DEFAULT;
-  #sourcedPoints = [];
   #newPointComponent = null;
   #newPointComponentState = Mode.DEFAULT;
 
@@ -50,6 +48,27 @@ export default class PointsListPresenter {
     this.#filtersContainer = filtersContainer;
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
+  }
+
+  get points() {
+    switch (this.#currentSortType) {
+      case SortType.PRICE:
+        return [...this.#pointsModel.points].sort(sortPriceDown);
+      case SortType.DURATION:
+        return [...this.#pointsModel.points].sort(sortTimeDown);
+    }
+
+    return this.#pointsModel.points;
+  }
+
+  get offers() {
+    return this.#pointsModel.offers;
+  }
+
+  get destinations() {
+    return this.#pointsModel.destinations;
   }
 
   init() {
@@ -57,12 +76,8 @@ export default class PointsListPresenter {
   }
 
   #installEnvironmentTemplate() {
-    if (this.#pointsModel.points) {
-      this.#points = [...this.#pointsModel.points];
-      this.#sourcedPoints = [...this.#pointsModel.points];
-      this.#destinations = [...this.#pointsModel.destinations];
-      this.#offers = [...this.#pointsModel.offers];
-      this.#tripFiltersView = new TripFiltersView({points: this.#points});
+    if (this.points) {
+      this.#tripFiltersView = new TripFiltersView({points: this.points});
 
       render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripCreateButtonView, this.#tripMainContainer);
@@ -77,14 +92,14 @@ export default class PointsListPresenter {
   #renderPoints() {
     for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
       this.#pointPresenter = new PointPresenter({
-        offer: this.#offers,
-        destinations: this.#destinations,
+        offer: this.offers,
+        destinations: this.destinations,
         tripListView: this.#tripListView,
-        onDataChange: this.#handlePointChange,
+        onDataChange: this.#handleViewAction,
         onModeChange: this.#handleModChange
       });
-      this.#pointPresenter.init(this.#points[i]);
-      this.#pointPresenters.set(this.#points[i].id, this.#pointPresenter);
+      this.#pointPresenter.init(this.points[i]);
+      this.#pointPresenters.set(this.points[i].id, this.#pointPresenter);
     }
   }
 
@@ -98,6 +113,34 @@ export default class PointsListPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.resetView());
     if (this.#newPointComponentState === Mode.EDITING) {
       this.#removeAddPointView();
+    }
+  };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    switch(actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    }
+  };
+
+  #handleModelEvent = (updateType, update) => {
+    switch(updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenters.get(update.id).init(update);
+        break;
+      case UpdateType.MINOR:
+        // Делаем что-то
+        break;
+      case UpdateType.MAJOR:
+        // Делаем что-то
+        break;
     }
   };
 
@@ -116,33 +159,12 @@ export default class PointsListPresenter {
 
   #tripCreateButtonView = new TripCreateButtonView(this.#handlerEventAddButton);
 
-  #handlePointChange = (updatePoint) => {
-    this.#points = updateItem(this.#points, updatePoint);
-    this.#sourcedPoints = updateItem(this.#sourcedPoints, updatePoint);
-    this.#pointPresenters.get(updatePoint.id).init(updatePoint);
-  };
-
-  #sortPoints(sortType) {
-    switch (sortType) {
-      case SortType.PRICE:
-        this.#points.sort(sortPriceDown);
-        break;
-      case SortType.DURATION:
-        this.#points.sort(sortTimeDown);
-        break;
-      default:
-        this.#points = [...this.#sourcedPoints];
-    }
-
-    this.#currentSortType = sortType;
-  }
-
   #handleSortTypeChange = (sortType) => {
     if (sortType === this.#currentSortType) {
       return;
     }
 
-    this.#sortPoints(sortType);
+    this.#currentSortType = sortType;
     this.#clearPointsList();
     this.#renderPoints();
   };

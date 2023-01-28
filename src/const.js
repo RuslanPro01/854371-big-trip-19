@@ -55,6 +55,18 @@ const BLANK_POINT = {
   type: DEFAULT_TRIP_TYPE,
 };
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT'
+};
+
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR'
+};
+
 export {
   MAX_PRICE,
   NUMBER_POINTS_CREATED,
@@ -67,5 +79,7 @@ export {
   Mode,
   SortType,
   PointState,
-  BLANK_POINT
+  BLANK_POINT,
+  UserAction,
+  UpdateType
 };

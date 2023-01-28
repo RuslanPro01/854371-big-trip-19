@@ -6,6 +6,10 @@ import {
   remove
 } from '../framework/render.js';
 import {Mode} from '../const.js';
+import {
+  UserAction,
+  UpdateType
+} from '../const.js';
 
 export default class PointPresenter {
   #point = null;
@@ -52,9 +56,7 @@ export default class PointPresenter {
       point: point,
       destinations: destinations,
       offers: offers,
-      onClick: () => {
-        this.#replaceFormToPoint.call(this);
-      }
+      onFormSubmit: this.#handleSaveButtonClick
     });
 
     if (pointComponent === null || editPointComponent === null) {
@@ -107,6 +109,19 @@ export default class PointPresenter {
   };
 
   #handleFavoriteClick = () => {
-    this.#handleDataChange({...this.#point, isFavorite: !this.#point.isFavorite});
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      {...this.#point, isFavorite: !this.#point.isFavorite}
+    );
+  };
+
+  #handleSaveButtonClick = (point) => {
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point
+    );
+    this.#replaceFormToPoint.call(this);
   };
 }
