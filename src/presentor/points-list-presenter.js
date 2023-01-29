@@ -13,6 +13,7 @@ import {
   Mode,
   NUMBER_POINTS_CREATED,
   SortType,
+  testFilters,
   UpdateType,
   UserAction
 } from '../const.js';
@@ -77,7 +78,11 @@ export default class PointsListPresenter {
 
   #installEnvironmentTemplate() {
     if (this.points) {
-      this.#tripFiltersView = new TripFiltersView({points: this.points});
+      this.#tripFiltersView = new TripFiltersView({
+        testFilters,
+        currentFilterType: 'all',
+        onFilterTypeChange: () => {}
+      });
 
       render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripCreateButtonView, this.#tripMainContainer);
