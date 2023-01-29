@@ -9,8 +9,8 @@ import TripListEmptyView from '../view/trip-list-empty-view.js';
 import PointPresenter from './point-presenter.js';
 import {
   BLANK_POINT,
+  FilterType,
   Mode,
-  NUMBER_POINTS_CREATED,
   SortType,
   UpdateType,
   UserAction
@@ -33,13 +33,14 @@ export default class PointsListPresenter {
 
   #tripSortView = null;
   #tripListView = new TripListView();
-  #tripListEmptyView = new TripListEmptyView();
+  #tripListEmptyView = null;
   #pointPresenter = null;
   #pointPresenters = new Map();
 
   #currentSortType = SortType.DEFAULT;
   #newPointComponent = null;
   #newPointComponentState = Mode.DEFAULT;
+  #filterType = FilterType.EVERYTHING;
 
   // TripCreateButtonView => PointsListPresenter => handler (44) => createNewEditView => renderNewEditView
   constructor({tripMainContainer, tripEventsContainer, pointsModel, filterModel}) {
@@ -53,9 +54,9 @@ export default class PointsListPresenter {
   }
 
   get points() {
-    const filterType = this.#filterModel.filter;
+    this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
       case SortType.PRICE:
@@ -80,18 +81,14 @@ export default class PointsListPresenter {
   }
 
   #installEnvironmentTemplate() {
-    if (this.points) {
-      render(this.#tripCreateButtonView, this.#tripMainContainer);
-      this.#renderSort();
-      render(this.#tripListView, this.#tripEventsContainer);
-      this.#renderPoints();
-    } else {
-      render(this.#tripListEmptyView, this.#tripEventsContainer);
-    }
+    render(this.#tripCreateButtonView, this.#tripMainContainer);
+    this.#renderSort();
+    render(this.#tripListView, this.#tripEventsContainer);
+    this.#renderPoints();
   }
 
   #renderPoints() {
-    for (let i = 0; i < NUMBER_POINTS_CREATED; i++) {
+    for (let i = 0; i < this.points.length; i++) {
       this.#pointPresenter = new PointPresenter({
         offer: this.offers,
         destinations: this.destinations,
@@ -102,6 +99,14 @@ export default class PointsListPresenter {
       this.#pointPresenter.init(this.points[i]);
       this.#pointPresenters.set(this.points[i].id, this.#pointPresenter);
     }
+  }
+
+  #renderListEmpty() {
+    this.#tripListEmptyView = new TripListEmptyView({
+      filterType: this.#filterType
+    });
+
+    render(this.#tripListEmptyView, this.#tripEventsContainer);
   }
 
   #removeAddPointView = () => {
@@ -118,7 +123,7 @@ export default class PointsListPresenter {
   };
 
   #handleViewAction = (actionType, updateType, update) => {
-    switch(actionType) {
+    switch (actionType) {
       case UserAction.UPDATE_POINT:
         this.#pointsModel.updatePoint(updateType, update);
         break;
@@ -132,7 +137,7 @@ export default class PointsListPresenter {
   };
 
   #handleModelEvent = (updateType, update) => {
-    switch(updateType) {
+    switch (updateType) {
       case UpdateType.PATCH:
         this.#pointPresenters.get(update.id).init(update);
         break;
@@ -151,7 +156,9 @@ export default class PointsListPresenter {
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
 
-    remove(this.#tripListEmptyView);
+    if (this.#tripListEmptyView) {
+      remove(this.#tripListEmptyView);
+    }
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -160,6 +167,9 @@ export default class PointsListPresenter {
 
   #renderSpaceTrip() {
     this.#renderPoints();
+    if (this.points.length === 0) {
+      this.#renderListEmpty();
+    }
   }
 
   #handlerEventAddButton = (evt) => {
