@@ -133,18 +133,19 @@ export default class AddPointView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #handleClick = null;
   #onCancelButtonClick = null;
+  #onFormSubmit = null;
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({point = BLANK_POINT, destinations, offers, cancelButtonHandler}) {
+  constructor({point = BLANK_POINT, destinations, offers, cancelButtonHandler, formSubmitHandler}) {
     super();
     this._setState(AddPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#onCancelButtonClick = cancelButtonHandler;
+    this.#onFormSubmit = formSubmitHandler;
 
     this._restoreHandlers();
   }
@@ -161,9 +162,9 @@ export default class AddPointView extends AbstractStatefulView {
     return {...state};
   }
 
-  #onEditPointComponentSubmit = (evt) => {
+  #onPointComponentSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleClick(AddPointView.parseStateToPoint(this._state));
+    this.#onFormSubmit(AddPointView.parseStateToPoint(this._state));
   };
 
   #onEventTypeWrapperClick = (evt) => {
@@ -247,7 +248,7 @@ export default class AddPointView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onPointComponentSubmit);
     this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onEventInputDestinationChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventInputPriceChange);

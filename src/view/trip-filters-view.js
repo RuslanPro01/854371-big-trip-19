@@ -51,7 +51,7 @@ export default class TripFiltersView extends AbstractView {
 
   #onFilterTypeChange = (evt) => {
     evt.preventDefault();
-    if (evt.target.previousElementSibling.nodeName === 'INPUT') {
+    if (evt.target.previousElementSibling.nodeName === 'INPUT' && evt.target.previousElementSibling.disabled === false) {
       this.#handleFilterTypeChange(evt.target.previousElementSibling.value);
     }
   };
