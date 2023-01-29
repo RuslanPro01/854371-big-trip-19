@@ -18,7 +18,8 @@ const filterPresenter = new FilterPresenter({
 const tripPresenter = new PointsListPresenter({
   tripMainContainer: tripMainContainer,
   tripEventsContainer: tripEventsElement,
-  pointsModel
+  pointsModel,
+  filterModel
 });
 
 filterPresenter.init();

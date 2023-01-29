@@ -12,7 +12,7 @@ function createFilterItemTemplate(filter, currentFilterType) {
       ${count ? '' : 'disabled'}
       ${type === currentFilterType ? 'checked' : ''}>
       <label class="trip-filters__filter-label"
-      for="filter-everything">${name} ${count ? count : ''}</label>
+      for="filter-everything">${name}${count ? ` ${count}` : ''}</label>
     </div>
   `);
 }
@@ -42,7 +42,7 @@ export default class TripFiltersView extends AbstractView {
     this.#currentFilterType = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;
 
-    this.element.addEventListener('change', this.#onFilterTypeChange);
+    this.element.addEventListener('click', this.#onFilterTypeChange);
   }
 
   get template() {
@@ -50,6 +50,9 @@ export default class TripFiltersView extends AbstractView {
   }
 
   #onFilterTypeChange = (evt) => {
-    this.#handleFilterTypeChange(evt.target.value);
+    evt.preventDefault();
+    if (evt.target.previousElementSibling.nodeName === 'INPUT') {
+      this.#handleFilterTypeChange(evt.target.previousElementSibling.value);
+    }
   };
 }

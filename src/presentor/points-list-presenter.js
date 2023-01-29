@@ -23,11 +23,13 @@ import TripCreateButtonView from '../view/trip-create-button-view.js';
 import {destinations} from '../mock/destinations.js';
 import {offers} from '../mock/offer.js';
 import AddPointView from '../view/add-point-view.js';
+import {filter} from '../utils/utils-filter.js';
 
 export default class PointsListPresenter {
   #tripMainContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
+  #filterModel = null;
 
   #tripSortView = null;
   #tripListView = new TripListView();
@@ -40,23 +42,29 @@ export default class PointsListPresenter {
   #newPointComponentState = Mode.DEFAULT;
 
   // TripCreateButtonView => PointsListPresenter => handler (44) => createNewEditView => renderNewEditView
-  constructor({tripMainContainer, tripEventsContainer, pointsModel}) {
+  constructor({tripMainContainer, tripEventsContainer, pointsModel, filterModel}) {
     this.#tripMainContainer = tripMainContainer;
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
+    this.#filterModel = filterModel;
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
+    const filterType = this.#filterModel.filter;
+    const points = this.#pointsModel.points;
+    const filteredPoints = filter[filterType](points);
+
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return [...this.#pointsModel.points].sort(sortPriceDown);
+        return filteredPoints.sort(sortPriceDown);
       case SortType.DURATION:
-        return [...this.#pointsModel.points].sort(sortTimeDown);
+        return filteredPoints.sort(sortTimeDown);
     }
 
-    return this.#pointsModel.points;
+    return filteredPoints;
   }
 
   get offers() {
