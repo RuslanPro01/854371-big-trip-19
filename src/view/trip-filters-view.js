@@ -36,9 +36,9 @@ export default class TripFiltersView extends AbstractView {
   #currentFilterType = null;
   #handleFilterTypeChange = null;
 
-  constructor({testFilters, currentFilterType, onFilterTypeChange}) {
+  constructor({filters, currentFilterType, onFilterTypeChange}) {
     super();
-    this.#filters = testFilters;
+    this.#filters = filters;
     this.#currentFilterType = currentFilterType;
     this.#handleFilterTypeChange = onFilterTypeChange;
 

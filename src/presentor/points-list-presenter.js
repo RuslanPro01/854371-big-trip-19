@@ -3,7 +3,6 @@ import {
   render,
   RenderPosition
 } from '../framework/render.js';
-import TripFiltersView from '../view/trip-filters-view.js';
 import TripSortView from '../view/trip-sort-view.js';
 import TripListView from '../view/trip-list-view.js';
 import TripListEmptyView from '../view/trip-list-empty-view.js';
@@ -13,7 +12,6 @@ import {
   Mode,
   NUMBER_POINTS_CREATED,
   SortType,
-  testFilters,
   UpdateType,
   UserAction
 } from '../const.js';
@@ -28,10 +26,8 @@ import AddPointView from '../view/add-point-view.js';
 
 export default class PointsListPresenter {
   #tripMainContainer = null;
-  #filtersContainer = null;
   #tripEventsContainer = null;
   #pointsModel = null;
-  #tripFiltersView = null;
 
   #tripSortView = null;
   #tripListView = new TripListView();
@@ -44,9 +40,8 @@ export default class PointsListPresenter {
   #newPointComponentState = Mode.DEFAULT;
 
   // TripCreateButtonView => PointsListPresenter => handler (44) => createNewEditView => renderNewEditView
-  constructor({tripMainContainer, filtersContainer, tripEventsContainer, pointsModel}) {
+  constructor({tripMainContainer, tripEventsContainer, pointsModel}) {
     this.#tripMainContainer = tripMainContainer;
-    this.#filtersContainer = filtersContainer;
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
 
@@ -78,13 +73,6 @@ export default class PointsListPresenter {
 
   #installEnvironmentTemplate() {
     if (this.points) {
-      this.#tripFiltersView = new TripFiltersView({
-        testFilters,
-        currentFilterType: 'all',
-        onFilterTypeChange: () => {}
-      });
-
-      render(this.#tripFiltersView, this.#filtersContainer);
       render(this.#tripCreateButtonView, this.#tripMainContainer);
       this.#renderSort();
       render(this.#tripListView, this.#tripEventsContainer);
@@ -156,7 +144,6 @@ export default class PointsListPresenter {
     this.#pointPresenters.clear();
 
     remove(this.#tripListEmptyView);
-    remove(this.#tripFiltersView);
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -164,8 +151,6 @@ export default class PointsListPresenter {
   }
 
   #renderSpaceTrip() {
-    this.#tripFiltersView = new TripFiltersView({points: this.points});
-    render(this.#tripFiltersView, this.#filtersContainer);
     this.#renderPoints();
   }
 

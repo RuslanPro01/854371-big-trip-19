@@ -73,11 +73,3 @@ export const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR'
 };
-
-export const testFilters = [
-  {
-    type: 'all',
-    name: 'ALL',
-    count: 0
-  }
-];
