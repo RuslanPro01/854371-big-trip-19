@@ -7,6 +7,7 @@ import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
 
 import 'flatpickr/dist/flatpickr.min.css';
+import he from 'he';
 
 function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
@@ -84,7 +85,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1" data-base-value="${name}">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1" data-base-value="${name}">
           </div>
 
           <div class="event__field-group  event__field-group--time">
