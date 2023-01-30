@@ -9,9 +9,9 @@ import {
 } from '../utils/utils-point-view.js';
 
 function createPointTemplate(point, destinations, allOffers) {
-  const {basePrice, dayFrom, dayTo, offers, isFavorite, type, id} = point;
+  const {basePrice, dayFrom, dayTo, offers, isFavorite, type, destination} = point;
   const pointTypeOffer = allOffers ? allOffers.find((offer) => offer.type === type) : '';
-  const pointDestination = destinations.find((destination) => destination.id === id);
+  const pointDestination = destinations.find((currentDestination) => currentDestination.id === destination[0]);
   const {name = ''} = pointDestination;
   let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
 

@@ -5,6 +5,7 @@ import {
 } from '../const.js';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import flatpickr from 'flatpickr';
+import he from 'he';
 
 function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
@@ -82,7 +83,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${name}" list="destination-list-1" data-base-value="${name}">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1" data-base-value="${name}">
           </div>
 
           <div class="event__field-group  event__field-group--time">
@@ -98,7 +99,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${basePrice}">
+            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${he.encode(basePrice)}" required>
           </div>
 
           <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -133,18 +134,21 @@ export default class AddPointView extends AbstractStatefulView {
   #point = null;
   #destinations = null;
   #offers = null;
-  #handleClick = null;
   #onCancelButtonClick = null;
+  #onFormSubmit = null;
   #datepickerFrom = null;
   #datepickerTo = null;
+  #submitFormButton = null;
 
-  constructor({point = BLANK_POINT, destinations, offers, cancelButtonHandler}) {
+  constructor({point = BLANK_POINT, destinations, offers, cancelButtonHandler, formSubmitHandler}) {
     super();
     this._setState(AddPointView.parsePointToState(point));
     this.#point = point;
     this.#destinations = destinations;
     this.#offers = offers;
     this.#onCancelButtonClick = cancelButtonHandler;
+    this.#onFormSubmit = formSubmitHandler;
+    this.#submitFormButton = this.element.querySelector('.event__save-btn');
 
     this._restoreHandlers();
   }
@@ -161,9 +165,9 @@ export default class AddPointView extends AbstractStatefulView {
     return {...state};
   }
 
-  #onEditPointComponentSubmit = (evt) => {
+  #onPointComponentSubmit = (evt) => {
     evt.preventDefault();
-    this.#handleClick(AddPointView.parseStateToPoint(this._state));
+    this.#onFormSubmit(AddPointView.parseStateToPoint(this._state));
   };
 
   #onEventTypeWrapperClick = (evt) => {
@@ -178,9 +182,8 @@ export default class AddPointView extends AbstractStatefulView {
 
   #onEventInputDestinationChange = (evt) => {
     const inputValue = evt.target.value;
-    const submitFormButton = this.element.querySelector('.event__save-btn');
     if (evt.target.dataset.baseValue === inputValue) {
-      submitFormButton.disabled = false;
+      this.#submitFormButton.disabled = false;
       return;
     }
     const cities = Object.values(this.#destinations).map((destination) => destination.name);
@@ -189,9 +192,8 @@ export default class AddPointView extends AbstractStatefulView {
         destination: [cities.indexOf(inputValue) + 1]
       });
     } else {
-      submitFormButton.disabled = true;
+      this.#submitFormButton.disabled = true;
     }
-
   };
 
   #onInputDateFromChange = ([userDate]) => {
@@ -246,12 +248,28 @@ export default class AddPointView extends AbstractStatefulView {
     );
   }
 
+  #onOfferCheckboxChange = () => {
+    const offersContainer = this.element.querySelector('.event__available-offers');
+    const offers = offersContainer.querySelectorAll('input');
+    const selectedOffers = [];
+    offers.forEach((offer, index) => {
+      if (offer.checked) {
+        selectedOffers.push(index + 1);
+      }
+    });
+
+    this.updateElement({
+      offers: [...selectedOffers],
+    });
+  };
+
   _restoreHandlers() {
-    this.element.querySelector('.event--edit').addEventListener('submit', this.#onEditPointComponentSubmit);
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#onPointComponentSubmit);
     this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onEventInputDestinationChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventInputPriceChange);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onCancelButtonClick);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOfferCheckboxChange);
 
     this.#setDatePicker();
   }

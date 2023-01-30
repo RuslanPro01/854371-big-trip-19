@@ -15,3 +15,12 @@ export const RandomPointDate = {
 };
 export const getRandomArrayElement = (array) => array[getRandomNumber(array.length - 1)];
 export const getRandomIntFromInterval = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+export const getNewId = () => {
+  if (!localStorage['newId']) {
+    localStorage['newId'] = 10000;
+    return localStorage['newId'];
+  }
+  localStorage['newId'] -= 1;
+
+  return localStorage['newId'];
+};

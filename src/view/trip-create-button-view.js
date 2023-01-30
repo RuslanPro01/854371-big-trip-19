@@ -5,9 +5,11 @@ const createTemplateButton = () => (`
 `);
 
 export default class TripCreateButtonView extends AbstractView {
-  constructor(onCreateButtonClick) {
+  #createButtonHandler = null;
+  constructor({onCreateButtonClick}) {
     super();
-    this.element.addEventListener('click', onCreateButtonClick);
+    this.#createButtonHandler = onCreateButtonClick;
+    this.element.addEventListener('click', this.#createButtonHandler);
   }
 
   get template() {

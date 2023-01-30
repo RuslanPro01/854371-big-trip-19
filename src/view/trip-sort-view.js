@@ -1,5 +1,5 @@
-import AbstractView from '../framework/view/abstract-view.js';
 import {SortType} from '../const.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
 function createTripSortTemplate() {
   return (
@@ -32,12 +32,13 @@ function createTripSortTemplate() {
   );
 }
 
-export default class TripSortView extends AbstractView {
+export default class TripSortView extends AbstractStatefulView {
   #handleSortTypeChange = null;
   constructor({onSortTypeChange}) {
     super();
     this.#handleSortTypeChange = onSortTypeChange;
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+
+    this._restoreHandlers();
   }
 
   get template() {
@@ -51,4 +52,8 @@ export default class TripSortView extends AbstractView {
 
     this.#handleSortTypeChange(evt.target.dataset.sortType);
   };
+
+  _restoreHandlers() {
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
+  }
 }
