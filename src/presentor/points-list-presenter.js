@@ -52,9 +52,10 @@ export default class PointsListPresenter {
   }
 
   createPoint() {
-    this.#currentSortType = SortType.DEFAULT;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
+    this.#removeSort();
+    this.#renderSort();
   }
 
   get points() {
@@ -64,9 +65,9 @@ export default class PointsListPresenter {
 
     switch (this.#currentSortType) {
       case SortType.PRICE:
-        return filteredPoints.sort(sortPriceDown);
+        return [...filteredPoints].sort(sortPriceDown);
       case SortType.DURATION:
-        return filteredPoints.sort(sortTimeDown);
+        return [...filteredPoints].sort(sortTimeDown);
     }
 
     return filteredPoints;
@@ -184,6 +185,11 @@ export default class PointsListPresenter {
     });
 
     render(this.#tripSortView, this.#tripEventsContainer, RenderPosition.AFTERBEGIN);
+  }
+
+  #removeSort() {
+    this.#currentSortType = SortType.DEFAULT;
+    remove(this.#tripSortView);
   }
 
   #clearPointsList() {

@@ -248,12 +248,28 @@ export default class AddPointView extends AbstractStatefulView {
     );
   }
 
+  #onOfferCheckboxChange = () => {
+    const offersContainer = this.element.querySelector('.event__available-offers');
+    const offers = offersContainer.querySelectorAll('input');
+    const selectedOffers = [];
+    offers.forEach((offer, index) => {
+      if (offer.checked) {
+        selectedOffers.push(index + 1);
+      }
+    });
+
+    this.updateElement({
+      offers: [...selectedOffers],
+    });
+  };
+
   _restoreHandlers() {
     this.element.querySelector('.event--edit').addEventListener('submit', this.#onPointComponentSubmit);
     this.element.querySelector('.event__type-wrapper').addEventListener('click', this.#onEventTypeWrapperClick);
     this.element.querySelector('.event__input--destination').addEventListener('input', this.#onEventInputDestinationChange);
     this.element.querySelector('.event__input--price').addEventListener('input', this.#onEventInputPriceChange);
     this.element.querySelector('.event__reset-btn').addEventListener('click', this.#onCancelButtonClick);
+    this.element.querySelector('.event__available-offers').addEventListener('change', this.#onOfferCheckboxChange);
 
     this.#setDatePicker();
   }
