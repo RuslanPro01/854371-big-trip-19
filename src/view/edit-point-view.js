@@ -198,7 +198,7 @@ export default class EditPointView extends AbstractStatefulView {
     const cities = Object.values(this.#destinations).map((destination) => destination.name);
     if (cities.some((cityName) => cityName === inputValue)) {
       this.updateElement({
-        destination: [cities.indexOf(inputValue) + 1]
+        destination: cities.indexOf(inputValue) + 1
       });
     } else {
       submitFormButton.disabled = true;
