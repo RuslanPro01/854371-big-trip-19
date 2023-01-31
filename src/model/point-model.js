@@ -1,12 +1,50 @@
-import {points} from '../mock/points.js';
-import {destinations} from '../mock/destinations.js';
-import {offers} from '../mock/offer.js';
 import Observable from '../framework/observable.js';
 
 export default class PointModel extends Observable {
-  #points = points;
-  #destinations = destinations;
-  #offers = offers;
+  #points = [];
+  #destinations = [];
+  #offers = [];
+  #pontApiService = null;
+
+  constructor({pointApiService}) {
+    super();
+    this.#pontApiService = pointApiService;
+  }
+
+  async init() {
+    try {
+      const allPoints = await this.#pontApiService.points;
+      this.#points = allPoints.map(this.#pointAdaptToClient);
+    } catch (error) {
+      this.#points = [];
+    }
+    try {
+      this.#destinations = await this.#pontApiService.destinations;
+    } catch (error) {
+      this.#destinations = [];
+    }
+    try {
+      this.#offers = await this.#pontApiService.offers;
+    } catch (error) {
+      this.#offers = [];
+    }
+  }
+
+  #pointAdaptToClient(point) {
+    const adaptedPoint = {...point,
+      'basePrice': point['base_price'],
+      'dateForm': point['date_from'],
+      'dateTo': point['date_to'],
+      'isFavorite': point['is_favorite']
+    };
+
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  }
 
   get points() {
     return this.#points;

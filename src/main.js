@@ -4,11 +4,17 @@ import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presentor/filter-presenter.js';
 import TripCreateButtonView from './view/trip-create-button-view.js';
 import {render} from './framework/render.js';
+import PointsApiService from './points-api-service';
+
+const AUTHORIZATION = 'Basic a866bd0ca80a41e7a42427c7ac73bc01';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip/';
 
 const tripMainContainer = document.querySelector('.trip-main');
 const tripControlsFiltersElement = tripMainContainer.querySelector('.trip-controls__filters');
 const tripEventsElement = document.querySelector('.trip-events');
-const pointsModel = new PointModel();
+const pointsModel = new PointModel({
+  pointApiService: new PointsApiService(END_POINT, AUTHORIZATION)
+});
 const filterModel = new FilterModel();
 
 const filterPresenter = new FilterPresenter({
@@ -43,3 +49,4 @@ render(newTripCreateButtonView, tripMainContainer);
 
 filterPresenter.init();
 tripPresenter.init();
+pointsModel.init();
