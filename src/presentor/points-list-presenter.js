@@ -19,6 +19,7 @@ import {
 } from '../utils/utils-point-view.js';
 import {filter} from '../utils/utils-filter.js';
 import NewPointPresenter from './new-point-presenter.js';
+import TripLoadingView from '../view/trip-loading-view.js';
 
 export default class PointsListPresenter {
   #tripMainContainer = null;
@@ -29,12 +30,14 @@ export default class PointsListPresenter {
   #tripSortView = null;
   #tripListView = new TripListView();
   #tripListEmptyView = null;
+  #tripLoadingView = new TripLoadingView();
   #pointPresenter = null;
   #pointPresenters = new Map();
 
   #currentSortType = SortType.DEFAULT;
   #filterType = FilterType.EVERYTHING;
   #newPointPresenter = null;
+  #isLoading = true;
 
   constructor({tripMainContainer, tripEventsContainer, pointsModel, filterModel, onNewPointDestroy}) {
     this.#tripMainContainer = tripMainContainer;
@@ -44,7 +47,8 @@ export default class PointsListPresenter {
     this.#newPointPresenter = new NewPointPresenter({
       tripEventsContainer: this.#tripListView.element,
       onDataChange: this.#handleViewAction,
-      onDestroy: onNewPointDestroy
+      onDestroy: onNewPointDestroy,
+      pointsModel: this.#pointsModel
     });
 
     this.#pointsModel.addObserver(this.#handleModelEvent);
@@ -86,9 +90,14 @@ export default class PointsListPresenter {
   }
 
   #installEnvironmentTemplate() {
-    this.#renderSort();
+    if (this.#isLoading) {
+      this.#renderLoadingView();
+      return;
+    }
+    if (!this.#tripSortView) {
+      this.#renderSort();
+    }
     render(this.#tripListView, this.#tripEventsContainer);
-    this.#renderPoints();
   }
 
   #renderPoints() {
@@ -111,6 +120,10 @@ export default class PointsListPresenter {
     });
 
     render(this.#tripListEmptyView, this.#tripEventsContainer);
+  }
+
+  #renderLoadingView() {
+    render(this.#tripLoadingView, this.#tripEventsContainer);
   }
 
   #handleModChange = () => {
@@ -145,6 +158,11 @@ export default class PointsListPresenter {
         this.#clearSpaceTrip({resetSortType: true});
         this.#renderSpaceTrip();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#tripLoadingView);
+        this.#renderSpaceTrip();
+        break;
     }
   };
 
@@ -152,8 +170,9 @@ export default class PointsListPresenter {
     this.#newPointPresenter.destroy();
     this.#pointPresenters.forEach((presenter) => presenter.destroy());
     this.#pointPresenters.clear();
+    remove(this.#tripLoadingView);
 
-    if (this.#tripListEmptyView) {
+    if (this.#isLoading) {
       remove(this.#tripListEmptyView);
     }
 
@@ -163,6 +182,7 @@ export default class PointsListPresenter {
   }
 
   #renderSpaceTrip() {
+    this.#installEnvironmentTemplate();
     this.#renderPoints();
     if (this.points.length === 0) {
       this.#renderListEmpty();

@@ -12,7 +12,7 @@ import he from 'he';
 function createEditPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, type, offers} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
-  const pointDestination = destinations.find((destination) => destination.id === point.destination[0]) ? destinations.find((destination) => destination.id === point.destination[0]) : {};
+  const pointDestination = destinations.find((destination) => destination.id === point.destination) ? destinations.find((destination) => destination.id === point.destination) : {};
   const {description = '', name = '', pictures = ''} = pointDestination;
 
   let offerTypes = Object.values(allOffers).map((offer) => offer.type);

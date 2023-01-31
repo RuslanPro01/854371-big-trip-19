@@ -4,8 +4,6 @@ import {
   UpdateType,
   UserAction
 } from '../const.js';
-import {destinations} from '../mock/destinations.js';
-import {offers} from '../mock/offer.js';
 import {
   remove,
   render,
@@ -19,11 +17,14 @@ export default class NewPointPresenter {
   #handleDestroy = null;
 
   #addPointView = null;
+  #pointsModel = null;
 
-  constructor({tripEventsContainer, onDataChange, onDestroy}) {
+
+  constructor({tripEventsContainer, onDataChange, onDestroy, pointsModel}) {
     this.#tripListContainer = tripEventsContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
+    this.#pointsModel = pointsModel;
   }
 
   init() {
@@ -33,8 +34,8 @@ export default class NewPointPresenter {
 
     this.#addPointView = new AddPointView({
       point: BLANK_POINT,
-      destinations,
-      offers,
+      destinations: this.#pointsModel.destinations,
+      offers: this.#pointsModel.offers,
       cancelButtonHandler: this.#handleDeleteClick,
       formSubmitHandler: this.#handleFormSubmit
     });

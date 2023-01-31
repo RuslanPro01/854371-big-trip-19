@@ -1,4 +1,5 @@
 import Observable from '../framework/observable.js';
+import {UpdateType} from '../const.js';
 
 export default class PointModel extends Observable {
   #points = [];
@@ -28,13 +29,14 @@ export default class PointModel extends Observable {
     } catch (error) {
       this.#offers = [];
     }
+    this._notify(UpdateType.INIT);
   }
 
   #pointAdaptToClient(point) {
     const adaptedPoint = {...point,
       'basePrice': point['base_price'],
-      'dateForm': point['date_from'],
-      'dateTo': point['date_to'],
+      'dayFrom': point['date_from'],
+      'dayTo': point['date_to'],
       'isFavorite': point['is_favorite']
     };
 
@@ -50,16 +52,21 @@ export default class PointModel extends Observable {
     return this.#points;
   }
 
-  updatePoint(updateType, update) {
+  async updatePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      const response = await this.#pontApiService.updatePoint(update);
+      const updatedPoint = this.#pointAdaptToClient(response);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, updatedPoint);
+    } catch(error) {
+      throw new Error('Can\'t update task');
+    }
   }
 
   addPoint(updateType, update) {

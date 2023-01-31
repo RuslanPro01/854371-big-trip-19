@@ -7,7 +7,7 @@ import {render} from './framework/render.js';
 import PointsApiService from './points-api-service';
 
 const AUTHORIZATION = 'Basic a866bd0ca80a41e7a42427c7ac73bc01';
-const END_POINT = 'https://19.ecmascript.pages.academy/big-trip/';
+const END_POINT = 'https://19.ecmascript.pages.academy/big-trip';
 
 const tripMainContainer = document.querySelector('.trip-main');
 const tripControlsFiltersElement = tripMainContainer.querySelector('.trip-controls__filters');
@@ -45,8 +45,9 @@ function handleNewPointFormClose() {
   newTripCreateButtonView.element.disabled = false;
 }
 
-render(newTripCreateButtonView, tripMainContainer);
-
 filterPresenter.init();
 tripPresenter.init();
-pointsModel.init();
+pointsModel.init()
+  .finally(() => {
+    render(newTripCreateButtonView, tripMainContainer);
+  });

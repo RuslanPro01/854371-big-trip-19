@@ -28,7 +28,7 @@ export default class PointsApiService extends ApiService {
       url: `points/${point.id}`,
       method: Method.PUT,
       body: JSON.stringify(this.#pointAdaptToServer(point)),
-      headers: new Headers({'ContentType': 'application/json'})
+      headers: new Headers({'Content-Type': 'application/json'})
     });
 
     return await ApiService.parseResponse(response);
@@ -37,14 +37,14 @@ export default class PointsApiService extends ApiService {
   #pointAdaptToServer(point) {
     const adaptedPoint = {...point,
       'base_price': point.basePrice,
-      'date_from': point.dateFrom,
-      'date_to': point.dateTo,
+      'date_from': point.dayFrom,
+      'date_to': point.dayTo,
       'is_favorite': point.isFavorite
     };
 
     delete adaptedPoint.basePrice;
-    delete adaptedPoint.dateFrom;
-    delete adaptedPoint.dateTo;
+    delete adaptedPoint.dayFrom;
+    delete adaptedPoint.dayTo;
     delete adaptedPoint.isFavorite;
 
     return adaptedPoint;
