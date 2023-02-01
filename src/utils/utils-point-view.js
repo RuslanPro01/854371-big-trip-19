@@ -35,3 +35,5 @@ export const sortTimeDown = (pointA, pointB) => {
   const getPointDuration = (point) => getDifferenceConventionalUnits(point.dayTo, point.dayFrom, TimeUnits.SECOND);
   return getPointDuration(pointB) - getPointDuration(pointA);
 };
+
+export const dateSortDown = (pointA, pointB) => getDifferenceConventionalUnits(pointB.dayFrom, dayjs(), TimeUnits.SECOND) - getDifferenceConventionalUnits(pointA.dayFrom, dayjs(), TimeUnits.SECOND);

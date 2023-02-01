@@ -14,6 +14,7 @@ import {
   UserAction
 } from '../const.js';
 import {
+  dateSortDown,
   sortPriceDown,
   sortTimeDown
 } from '../utils/utils-point-view.js';
@@ -74,7 +75,7 @@ export default class PointsListPresenter {
         return [...filteredPoints].sort(sortTimeDown);
     }
 
-    return filteredPoints;
+    return filteredPoints.sort(dateSortDown);
   }
 
   get offers() {
@@ -177,6 +178,8 @@ export default class PointsListPresenter {
     }
 
     if (resetSortType) {
+      this.#removeSort();
+      this.#renderSort();
       this.#currentSortType = SortType.DEFAULT;
     }
   }
