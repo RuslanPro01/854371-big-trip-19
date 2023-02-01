@@ -11,7 +11,7 @@ import {
 function createPointTemplate(point, destinations, allOffers) {
   const {basePrice, dayFrom, dayTo, offers, isFavorite, type, destination} = point;
   const pointTypeOffer = allOffers ? allOffers.find((offer) => offer.type === type) : '';
-  const pointDestination = destinations.find((currentDestination) => currentDestination.id === destination[0]);
+  const pointDestination = destinations.find((currentDestination) => currentDestination.id === destination);
   const {name = ''} = pointDestination;
   let offersByType = pointTypeOffer ? [...pointTypeOffer.offers] : '';
 

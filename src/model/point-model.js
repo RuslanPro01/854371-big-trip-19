@@ -1,27 +1,72 @@
-import {points} from '../mock/points.js';
-import {destinations} from '../mock/destinations.js';
-import {offers} from '../mock/offer.js';
 import Observable from '../framework/observable.js';
+import {UpdateType} from '../const.js';
 
 export default class PointModel extends Observable {
-  #points = points;
-  #destinations = destinations;
-  #offers = offers;
+  #points = [];
+  #destinations = [];
+  #offers = [];
+  #pontApiService = null;
+
+  constructor({pointApiService}) {
+    super();
+    this.#pontApiService = pointApiService;
+  }
+
+  async init() {
+    try {
+      const allPoints = await this.#pontApiService.points;
+      this.#points = allPoints.map(this.#pointAdaptToClient);
+    } catch (error) {
+      this.#points = [];
+    }
+    try {
+      this.#destinations = await this.#pontApiService.destinations;
+    } catch (error) {
+      this.#destinations = [];
+    }
+    try {
+      this.#offers = await this.#pontApiService.offers;
+    } catch (error) {
+      this.#offers = [];
+    }
+    this._notify(UpdateType.INIT);
+  }
+
+  #pointAdaptToClient(point) {
+    const adaptedPoint = {...point,
+      'basePrice': point['base_price'],
+      'dayFrom': point['date_from'],
+      'dayTo': point['date_to'],
+      'isFavorite': point['is_favorite']
+    };
+
+    delete adaptedPoint['base_price'];
+    delete adaptedPoint['date_from'];
+    delete adaptedPoint['date_to'];
+    delete adaptedPoint['is_favorite'];
+
+    return adaptedPoint;
+  }
 
   get points() {
     return this.#points;
   }
 
-  updatePoint(updateType, update) {
+  async updatePoint(updateType, update) {
     const index = this.#points.findIndex((point) => point.id === update.id);
 
-    this.#points = [
-      ...this.#points.slice(0, index),
-      update,
-      ...this.#points.slice(index + 1),
-    ];
-
-    this._notify(updateType, update);
+    try {
+      const response = await this.#pontApiService.updatePoint(update);
+      const updatedPoint = this.#pointAdaptToClient(response);
+      this.#points = [
+        ...this.#points.slice(0, index),
+        updatedPoint,
+        ...this.#points.slice(index + 1),
+      ];
+      this._notify(updateType, updatedPoint);
+    } catch(error) {
+      throw new Error('Can\'t update task');
+    }
   }
 
   addPoint(updateType, update) {
