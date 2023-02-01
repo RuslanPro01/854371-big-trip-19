@@ -65,24 +65,31 @@ export default class PointModel extends Observable {
       ];
       this._notify(updateType, updatedPoint);
     } catch(error) {
-      throw new Error('Can\'t update task');
+      throw new Error('Can\'t update point');
     }
   }
 
-  addPoint(updateType, update) {
-    this.#points = [
-      update,
-      ...this.#points,
-    ];
+  async addPoint(updateType, update) {
+    try {
+      const response = await this.#pontApiService.addPoint(update);
+      const adaptedPoint = this.#pointAdaptToClient(response);
 
-    this._notify(updateType, update);
+      this.#points = [
+        adaptedPoint,
+        ...this.#points,
+      ];
+
+      this._notify(updateType, adaptedPoint);
+    } catch (error) {
+      throw new Error('Can\'t add point');
+    }
   }
 
   deletePoint(updateType, update) {
     const index = this.#points.findIndex((task) => task.id === update.id);
 
     if (index === -1) {
-      throw new Error('Can\'t delete unexisting task');
+      throw new Error('Can\'t delete unexisting point');
     }
 
     this.#points = [

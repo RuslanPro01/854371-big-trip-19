@@ -48,11 +48,12 @@ export const PointState = {
 
 export const BLANK_POINT = {
   basePrice: '',
-  dateFrom: RandomPointDate.GET_DATE_FROM(),
-  dateTo: RandomPointDate.GET_DATE_TO(),
-  destination: [1],
+  dayFrom: RandomPointDate.GET_DATE_FROM(),
+  dayTo: RandomPointDate.GET_DATE_TO(),
+  destination: 1,
   offers: [],
   type: DEFAULT_TRIP_TYPE,
+  isFavorite: false
 };
 
 export const FilterType = {

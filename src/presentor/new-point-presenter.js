@@ -9,7 +9,6 @@ import {
   render,
   RenderPosition
 } from '../framework/render.js';
-import {getNewId} from '../utils/utils-mock.js';
 
 export default class NewPointPresenter {
   #tripListContainer = null;
@@ -62,7 +61,7 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: getNewId(), ...point},
+      point,
     );
     this.destroy();
   };
