@@ -44,12 +44,24 @@ export default class NewPointPresenter {
     document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  // setSaving() {
-  //   this.#addPointView.updateElement({
-  //     isDisabled: true,
-  //     isSaving: true
-  //   });
-  // }
+  setSaving() {
+    this.#addPointView.updateElement({
+      isDisabled: true,
+      isSaving: true
+    });
+  }
+
+  setAborting() {
+    const resetFormState = () => {
+      this.#addPointView.updateElement({
+        isDisabled: false,
+        isSaving: false
+      });
+    };
+
+    this.#addPointView.shake(resetFormState);
+  }
+
 
   destroy() {
     if (this.#addPointView === null) {

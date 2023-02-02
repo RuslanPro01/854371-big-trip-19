@@ -177,10 +177,6 @@ export default class AddPointView extends AbstractStatefulView {
   #onPointComponentSubmit = (evt) => {
     evt.preventDefault();
     this.#onFormSubmit(AddPointView.parseStateToPoint(this._state));
-    this.updateElement({
-      isDisabled: true,
-      isSaving: true
-    });
   };
 
   #onEventTypeWrapperClick = (evt) => {
