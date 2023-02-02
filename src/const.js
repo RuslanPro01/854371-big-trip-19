@@ -1,11 +1,4 @@
 import {RandomPointDate} from './utils/utils-mock.js';
-
-export const MAX_PRICE = 10000;
-export const NUMBER_POINTS_CREATED = 10;
-export const POINT_TYPES = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-export const CITY_DESCRIPTIONS = ['', 'lorem mollis aliquam ut porttitor leo a diam sollicitudin tempor', 'sit amet luctus venenatis lectus magna fringilla urna porttitor rhoncus', 'dictum sit amet justo donec enim diam vulputate ut pharetra', '', 'ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper', 'dis parturient montes nascetur ridiculus mus mauris vitae ultricies leo', 'elementum curabitur vitae nunc sed velit dignissim sodales ut eu', 'feugiat scelerisque varius morbi enim nunc faucibus a pellentesque sit', ''];
-export const CITIES = ['Toronto', 'Quebec', 'Vancouver', 'Calgary', 'Ottawa', 'Montreal', 'Victoria', 'St. John\'s', 'Charlottetown', 'Saskatoon', 'Whitehorse', 'Halifax', 'Camrose', 'Lacombe', 'Leduc', 'Red Deer', 'Burnaby'];
-
 export const DateFormat = {
   HUMANIZE: 'MMM D',
   INTERNATIONAL: 'YYYY-MM-DD',
