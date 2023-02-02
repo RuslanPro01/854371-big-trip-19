@@ -10,7 +10,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import he from 'he';
 
 function createEditPointTemplate(point, destinations, allOffers) {
-  const {basePrice, dayFrom, dayTo, type, offers} = point;
+  const {basePrice, dayFrom, dayTo, type, offers, isDisabled, isSaving, isDeleting} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
   const pointDestination = destinations.find((destination) => destination.id === point.destination) ? destinations.find((destination) => destination.id === point.destination) : {};
   const {description = '', name = '', pictures = ''} = pointDestination;
@@ -27,7 +27,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
       const checkedClass = offers.includes(offer.id) ? 'checked' : '';
       return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${checkedClass}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${checkedClass} ${isDisabled ? 'disabled' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -85,15 +85,15 @@ function createEditPointTemplate(point, destinations, allOffers) {
             <datalist id="destination-list-1">
               ${cities}
             </datalist>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1" data-base-value="${name}">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(name)}" list="destination-list-1" data-base-value="${name}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatDate(dayFrom, DateFormat.INTERNATIONAL_WITH_TIME)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatDate(dayFrom, DateFormat.INTERNATIONAL_WITH_TIME)}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatDate(dayTo, DateFormat.INTERNATIONAL_WITH_TIME)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatDate(dayTo, DateFormat.INTERNATIONAL_WITH_TIME)}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -101,11 +101,11 @@ function createEditPointTemplate(point, destinations, allOffers) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${basePrice}">
+            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${basePrice}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Delete</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>${isDeleting ? 'Deleting...' : 'Delete'}</button>
 
           <button class="event__rollup-btn" type="button">
              <span class="visually-hidden">Open event</span>
@@ -162,11 +162,21 @@ export default class EditPointView extends AbstractStatefulView {
   }
 
   static parsePointToState(point) {
-    return {...point};
+    return {...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 
   #onEditPointComponentClick = () => {

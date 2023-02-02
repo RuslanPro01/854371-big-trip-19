@@ -8,9 +8,9 @@ import flatpickr from 'flatpickr';
 import he from 'he';
 
 function createEditPointTemplate(point, destinations, allOffers) {
-  const {basePrice, dayFrom, dayTo, type, offers} = point;
+  const {basePrice, dayFrom, dayTo, type, offers, isDisabled, isSaving} = point;
   const pointTypeOffer = allOffers.find((offer) => offer.type === type);
-  const pointDestination = destinations.find((destination) => destination.id === point.destination[0]) ? destinations.find((destination) => destination.id === point.destination[0]) : {};
+  const pointDestination = destinations.find((destination) => destination.id === point.destination) ? destinations.find((destination) => destination.id === point.destination) : {};
   const {description = '', name = '', pictures = ''} = pointDestination;
 
   let offerTypes = Object.values(allOffers).map((offer) => offer.type);
@@ -25,7 +25,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
       const checkedClass = offers.includes(offer.id) ? 'checked' : '';
       return `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${checkedClass}>
+      <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${offer.id}" type="checkbox" name="event-offer-${type}" ${checkedClass} ${isDisabled ? 'disabled' : ''}>
       <label class="event__offer-label" for="event-offer-${type}-${offer.id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -41,7 +41,7 @@ function createEditPointTemplate(point, destinations, allOffers) {
     capitalizeTypeOffer = capitalizeTypeOffer.join('');
     return (`
       <div class="event__type-item">
-        <input id="event-type-${typeOffer}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeOffer}" ${typeOffer === type ? 'checked' : ''} data-type-offer="${typeOffer}">
+        <input id="event-type-${typeOffer}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeOffer}" ${typeOffer === type ? 'checked' : ''} data-type-offer="${typeOffer}" ${isDisabled ? 'disabled' : ''}>
         <label class="event__type-label  event__type-label--${typeOffer}" for="event-type-${typeOffer}-1">${capitalizeTypeOffer}</label>
       </div>
 `);
@@ -88,10 +88,10 @@ function createEditPointTemplate(point, destinations, allOffers) {
 
           <div class="event__field-group  event__field-group--time">
             <label class="visually-hidden" for="event-start-time-1">From</label>
-            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatDate(dayFrom, DateFormat.INTERNATIONAL_WITH_TIME)}">
+            <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatDate(dayFrom, DateFormat.INTERNATIONAL_WITH_TIME)}" ${isDisabled ? 'disabled' : ''}>
             &mdash;
             <label class="visually-hidden" for="event-end-time-1">To</label>
-            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatDate(dayTo, DateFormat.INTERNATIONAL_WITH_TIME)}">
+            <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatDate(dayTo, DateFormat.INTERNATIONAL_WITH_TIME)}" ${isDisabled ? 'disabled' : ''}>
           </div>
 
           <div class="event__field-group  event__field-group--price">
@@ -99,11 +99,11 @@ function createEditPointTemplate(point, destinations, allOffers) {
               <span class="visually-hidden">Price</span>
               &euro;
             </label>
-            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${he.encode(basePrice)}" required>
+            <input class="event__input event__input--price" id="event-price-1" type="number" min="0" name="event-price" value="${he.encode(basePrice)}" required ${isDisabled ? 'disabled' : ''}>
           </div>
 
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit"${isDisabled ? 'disabled' : ''}>${isSaving ? 'Saving...' : 'Save'}</button>
+          <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>
         </header>
         <section class="event__details">
           <section class="event__section  event__section--offers" ${!offersByType ? 'style="display: none"' : ''}>
@@ -158,11 +158,20 @@ export default class AddPointView extends AbstractStatefulView {
   }
 
   static parsePointToState(point) {
-    return {...point};
+    return {
+      ...point,
+      isDisabled: false,
+      isSaving: false
+    };
   }
 
   static parseStateToPoint(state) {
-    return {...state};
+    const point = {...state};
+
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
   }
 
   #onPointComponentSubmit = (evt) => {
@@ -189,7 +198,7 @@ export default class AddPointView extends AbstractStatefulView {
     const cities = Object.values(this.#destinations).map((destination) => destination.name);
     if (cities.some((cityName) => cityName === inputValue)) {
       this.updateElement({
-        destination: [cities.indexOf(inputValue) + 1]
+        destination: cities.indexOf(inputValue) + 1
       });
     } else {
       this.#submitFormButton.disabled = true;
@@ -198,13 +207,13 @@ export default class AddPointView extends AbstractStatefulView {
 
   #onInputDateFromChange = ([userDate]) => {
     this.updateElement({
-      dayFrom: userDate,
+      dayFrom: userDate
     });
   };
 
   #onInputDateToChange = ([userDate]) => {
     this.updateElement({
-      dayTo: userDate,
+      dayTo: userDate
     });
   };
 
@@ -218,7 +227,7 @@ export default class AddPointView extends AbstractStatefulView {
         onChange: this.#onInputDateFromChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
-      },
+      }
     );
 
     this.#datepickerTo = flatpickr(this.element.querySelector('.event__input--time[name=event-end-time]'),
@@ -230,7 +239,7 @@ export default class AddPointView extends AbstractStatefulView {
         onChange: this.#onInputDateToChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
-      },
+      }
     );
   }
 
@@ -244,7 +253,7 @@ export default class AddPointView extends AbstractStatefulView {
 
   reset(point) {
     this.updateElement(
-      AddPointView.parsePointToState(point),
+      AddPointView.parsePointToState(point)
     );
   }
 
@@ -259,7 +268,7 @@ export default class AddPointView extends AbstractStatefulView {
     });
 
     this.updateElement({
-      offers: [...selectedOffers],
+      offers: [...selectedOffers]
     });
   };
 
