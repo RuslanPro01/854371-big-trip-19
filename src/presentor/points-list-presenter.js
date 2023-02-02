@@ -217,6 +217,8 @@ export default class PointsListPresenter {
     this.#renderPoints();
     if (this.points.length === 0) {
       this.#renderListEmpty();
+    } else if (this.#tripListEmptyView !== null) {
+      remove(this.#tripListEmptyView);
     }
   }
 
