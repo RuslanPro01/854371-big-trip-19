@@ -120,7 +120,7 @@ export default class PointsListPresenter {
   }
 
   #renderPoints() {
-    for (let i = 0; i < this.points.length; i++) {
+    this.points.forEach((point) => {
       this.#pointPresenter = new PointPresenter({
         offer: this.offers,
         destinations: this.destinations,
@@ -128,9 +128,9 @@ export default class PointsListPresenter {
         onDataChange: this.#handleViewAction,
         onModeChange: this.#handleModChange
       });
-      this.#pointPresenter.init(this.points[i]);
-      this.#pointPresenters.set(this.points[i].id, this.#pointPresenter);
-    }
+      this.#pointPresenter.init(point);
+      this.#pointPresenters.set(point.id, this.#pointPresenter);
+    });
   }
 
   renderListEmpty() {

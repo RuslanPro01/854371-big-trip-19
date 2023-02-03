@@ -57,7 +57,8 @@ export default class PointPresenter {
       destinations: destinations,
       offers: offers,
       onFormSubmit: this.#handleSaveButtonClick,
-      onDeleteClick: this.#handleDeleteButtonClick
+      onDeleteClick: this.#handleDeleteButtonClick,
+      onCancelButtonClick: this.#onCancelButtonClick,
     });
 
     if (pointComponent === null || editPointComponent === null) {
@@ -143,6 +144,11 @@ export default class PointPresenter {
       this.#replaceFormToPoint.call(this);
       document.removeEventListener('keydown', this.#onOpenEditFormEscKeyDown);
     }
+  };
+
+  #onCancelButtonClick = () => {
+    this.#editPointComponent.reset(this.#point);
+    this.#replaceFormToPoint.call(this);
   };
 
   #handleFavoriteClick = () => {
