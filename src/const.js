@@ -34,11 +34,6 @@ export const SortType = {
   PRICE: 'price'
 };
 
-export const PointState = {
-  EDIT: 'edit',
-  ADD: 'add',
-};
-
 export const BLANK_POINT = {
   basePrice: '',
   dayFrom: RandomPointDate.GET_DATE_FROM(),
