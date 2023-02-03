@@ -6,7 +6,7 @@ import TripCreateButtonView from './view/trip-create-button-view.js';
 import {render} from './framework/render.js';
 import PointsApiService from './points-api-service';
 
-const AUTHORIZATION = 'Basic a866bd0ca80a41e7a42427c7ac73bc01';
+const AUTHORIZATION = 'Basic a866bd0ca80a41e7a42427c7ac73bc02';
 const END_POINT = 'https://19.ecmascript.pages.academy/big-trip';
 
 const tripMainContainer = document.querySelector('.trip-main');
@@ -43,6 +43,8 @@ function handleNewPointButtonClick(evt) {
 
 function handleNewPointFormClose() {
   newTripCreateButtonView.element.disabled = false;
+  tripPresenter.disablePointCreationFlag();
+  tripPresenter.renderListEmpty();
 }
 
 filterPresenter.init();
