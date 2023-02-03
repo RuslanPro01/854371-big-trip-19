@@ -17,7 +17,7 @@ export default class PointModel extends Observable {
       const allPoints = await this.#pontApiService.points;
       this.#points = allPoints.map(this.#pointAdaptToClient);
     } catch (error) {
-      this.#points = [];
+      this.#points = null;
     }
     try {
       this.#destinations = await this.#pontApiService.destinations;

@@ -79,6 +79,10 @@ export default class PointsListPresenter {
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
+    if (!points) {
+      this.#filterType = 'ERROR';
+      return points;
+    }
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -133,7 +137,7 @@ export default class PointsListPresenter {
     if (this.#isCreatePoint) {
       return;
     }
-    if (this.points.length === 0) {
+    if (this.points === null || this.points.length === 0) {
       this.#tripListEmptyView = new TripListEmptyView({
         filterType: this.#filterType
       });
@@ -226,6 +230,9 @@ export default class PointsListPresenter {
 
   #renderSpaceTrip() {
     this.#installEnvironmentTemplate();
+    if (!this.points) {
+      return;
+    }
     this.#renderPoints();
   }
 

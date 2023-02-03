@@ -6,6 +6,7 @@ const NoPointTextType = {
   [FilterType.FUTURE]: 'There are no future events now',
   [FilterType.PRESENT]: 'There are no present events now',
   [FilterType.PAST]: 'There are no past events now',
+  'ERROR': 'Downloading error data, please, try again later'
 };
 const createTripListEmpty = (filterType) => {
   const noPointTextValue = NoPointTextType[filterType];
