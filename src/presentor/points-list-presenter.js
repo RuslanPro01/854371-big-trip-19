@@ -45,6 +45,7 @@ export default class PointsListPresenter {
   #filterType = FilterType.EVERYTHING;
   #newPointPresenter = null;
   #isLoading = true;
+  #isCreatePoint = false;
 
   #UiBlocker = new UiBlocker({
     lowerLimit: TimeLimit.LOWER_LIMIT,
@@ -68,6 +69,7 @@ export default class PointsListPresenter {
   }
 
   createPoint() {
+    this.#isCreatePoint = true;
     this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this.#newPointPresenter.init();
     this.#removeSort();
@@ -77,6 +79,10 @@ export default class PointsListPresenter {
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
+    if (!points) {
+      this.#filterType = 'ERROR';
+      return points;
+    }
     const filteredPoints = filter[this.#filterType](points);
 
     switch (this.#currentSortType) {
@@ -110,10 +116,11 @@ export default class PointsListPresenter {
       this.#renderSort();
     }
     render(this.#tripListView, this.#tripEventsContainer);
+    this.renderListEmpty();
   }
 
   #renderPoints() {
-    for (let i = 0; i < this.points.length; i++) {
+    this.points.forEach((point) => {
       this.#pointPresenter = new PointPresenter({
         offer: this.offers,
         destinations: this.destinations,
@@ -121,17 +128,28 @@ export default class PointsListPresenter {
         onDataChange: this.#handleViewAction,
         onModeChange: this.#handleModChange
       });
-      this.#pointPresenter.init(this.points[i]);
-      this.#pointPresenters.set(this.points[i].id, this.#pointPresenter);
+      this.#pointPresenter.init(point);
+      this.#pointPresenters.set(point.id, this.#pointPresenter);
+    });
+  }
+
+  renderListEmpty() {
+    if (this.#isCreatePoint) {
+      return;
+    }
+    if (this.points === null || this.points.length === 0) {
+      this.#tripListEmptyView = new TripListEmptyView({
+        filterType: this.#filterType
+      });
+
+      render(this.#tripListEmptyView, this.#tripEventsContainer);
+    } else if (this.#tripListEmptyView !== null) {
+      remove(this.#tripListEmptyView);
     }
   }
 
-  #renderListEmpty() {
-    this.#tripListEmptyView = new TripListEmptyView({
-      filterType: this.#filterType
-    });
-
-    render(this.#tripListEmptyView, this.#tripEventsContainer);
+  disablePointCreationFlag() {
+    this.#isCreatePoint = false;
   }
 
   #renderLoadingView() {
@@ -201,9 +219,7 @@ export default class PointsListPresenter {
     this.#pointPresenters.clear();
     remove(this.#tripLoadingView);
 
-    if (this.#isLoading) {
-      remove(this.#tripListEmptyView);
-    }
+    remove(this.#tripListEmptyView);
 
     if (resetSortType) {
       this.#removeSort();
@@ -214,12 +230,10 @@ export default class PointsListPresenter {
 
   #renderSpaceTrip() {
     this.#installEnvironmentTemplate();
-    this.#renderPoints();
-    if (this.points.length === 0) {
-      this.#renderListEmpty();
-    } else if (this.#tripListEmptyView !== null) {
-      remove(this.#tripListEmptyView);
+    if (!this.points) {
+      return;
     }
+    this.#renderPoints();
   }
 
   #handleSortTypeChange = (sortType) => {

@@ -18,18 +18,12 @@ function createPointTemplate(point, destinations, allOffers) {
   if (!offersByType) {
     offersByType = '';
   } else {
-    offersByType = offersByType.map((offer) => {
-      if (offers.includes(offer.id)) {
-        return `
+    offersByType = offersByType.map((offer) => offers.includes(offer.id) ? `
       <li class="event__offer">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
         <span class="event__offer-price">${offer.price}</span>
-      </li>`;
-      } else {
-        return '';
-      }
-    }).join('');
+      </li>` : '').join('');
   }
 
   const favoriteClassName = isFavorite ? 'event__favorite-btn--active' : '';

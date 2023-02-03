@@ -33,22 +33,22 @@ export default class FilterPresenter {
       {
         type: FilterType.EVERYTHING,
         name: 'Everything',
-        count: filter[FilterType.EVERYTHING](points).length
+        count: points ? filter[FilterType.EVERYTHING](points).length : ''
       },
       {
         type: FilterType.FUTURE,
         name: 'Future',
-        count: filter[FilterType.FUTURE](points).length
+        count: points ? filter[FilterType.FUTURE](points).length : ''
       },
       {
         type: FilterType.PRESENT,
         name: 'Present',
-        count: filter[FilterType.PRESENT](points).length
+        count: points ? filter[FilterType.PRESENT](points).length : ''
       },
       {
         type: FilterType.PAST,
         name: 'Past',
-        count: filter[FilterType.PAST](points).length
+        count: points ? filter[FilterType.PAST](points).length : ''
       },
     ];
   }
