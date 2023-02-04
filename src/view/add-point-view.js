@@ -157,21 +157,24 @@ export default class AddPointView extends AbstractStatefulView {
     return createEditPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
-  static parsePointToState(point) {
-    return {
-      ...point,
-      isDisabled: false,
-      isSaving: false
-    };
+  removeElement() {
+    super.removeElement();
+
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
+
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
   }
 
-  static parseStateToPoint(state) {
-    const point = {...state};
-
-    delete point.isDisabled;
-    delete point.isSaving;
-
-    return point;
+  reset(point) {
+    this.updateElement(
+      AddPointView.parsePointToState(point)
+    );
   }
 
   #onPointComponentSubmit = (evt) => {
@@ -224,7 +227,7 @@ export default class AddPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dayFrom,
         maxDate: this._state.dayTo,
-        onChange: this.#onInputDateFromChange,
+        onClose: this.#onInputDateFromChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
       }
@@ -236,7 +239,7 @@ export default class AddPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dayTo,
         minDate: this._state.dayFrom,
-        onChange: this.#onInputDateToChange,
+        onClose: this.#onInputDateToChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
       }
@@ -250,12 +253,6 @@ export default class AddPointView extends AbstractStatefulView {
       basePrice: priceValue
     });
   };
-
-  reset(point) {
-    this.updateElement(
-      AddPointView.parsePointToState(point)
-    );
-  }
 
   #onOfferCheckboxChange = () => {
     const offersContainer = this.element.querySelector('.event__available-offers');
@@ -283,17 +280,20 @@ export default class AddPointView extends AbstractStatefulView {
     this.#setDatePicker();
   }
 
-  removeElement() {
-    super.removeElement();
+  static parsePointToState(point) {
+    return {
+      ...point,
+      isDisabled: false,
+      isSaving: false
+    };
+  }
 
-    if (this.#datepickerFrom) {
-      this.#datepickerFrom.destroy();
-      this.#datepickerFrom = null;
-    }
+  static parseStateToPoint(state) {
+    const point = {...state};
 
-    if (this.#datepickerTo) {
-      this.#datepickerTo.destroy();
-      this.#datepickerTo = null;
-    }
+    delete point.isDisabled;
+    delete point.isSaving;
+
+    return point;
   }
 }
