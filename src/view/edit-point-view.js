@@ -163,22 +163,18 @@ export default class EditPointView extends AbstractStatefulView {
     return createEditPointTemplate(this._state, this.#destinations, this.#offers);
   }
 
-  static parsePointToState(point) {
-    return {...point,
-      isDisabled: false,
-      isSaving: false,
-      isDeleting: false,
-    };
-  }
+  removeElement() {
+    super.removeElement();
 
-  static parseStateToPoint(state) {
-    const point = {...state};
+    if (this.#datepickerFrom) {
+      this.#datepickerFrom.destroy();
+      this.#datepickerFrom = null;
+    }
 
-    delete point.isDisabled;
-    delete point.isSaving;
-    delete point.isDeleting;
-
-    return point;
+    if (this.#datepickerTo) {
+      this.#datepickerTo.destroy();
+      this.#datepickerTo = null;
+    }
   }
 
   #onEditPointComponentClick = () => {
@@ -237,7 +233,7 @@ export default class EditPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dayFrom,
         maxDate: this._state.dayTo,
-        onChange: this.#onInputDateFromChange,
+        onClose: this.#onInputDateFromChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
       },
@@ -249,7 +245,7 @@ export default class EditPointView extends AbstractStatefulView {
         dateFormat: 'd/m/y H:i',
         defaultDate: this._state.dayTo,
         minDate: this._state.dayFrom,
-        onChange: this.#onInputDateToChange,
+        onClose: this.#onInputDateToChange,
         // eslint-disable-next-line camelcase
         time_24hr: true
       },
@@ -302,17 +298,21 @@ export default class EditPointView extends AbstractStatefulView {
     this.#setDatePicker();
   }
 
-  removeElement() {
-    super.removeElement();
+  static parsePointToState(point) {
+    return {...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
+  }
 
-    if (this.#datepickerFrom) {
-      this.#datepickerFrom.destroy();
-      this.#datepickerFrom = null;
-    }
+  static parseStateToPoint(state) {
+    const point = {...state};
 
-    if (this.#datepickerTo) {
-      this.#datepickerTo.destroy();
-      this.#datepickerTo = null;
-    }
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 }
