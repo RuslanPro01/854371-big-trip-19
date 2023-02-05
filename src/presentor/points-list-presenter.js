@@ -22,6 +22,7 @@ import {filter} from '../utils/utils-filter.js';
 import NewPointPresenter from './new-point-presenter.js';
 import TripLoadingView from '../view/trip-loading-view.js';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
+import AboutTripView from '../view/about-trip-view.js';
 
 const TimeLimit = {
   LOWER_LIMIT: 350,
@@ -34,6 +35,7 @@ export default class PointsListPresenter {
   #pointsModel = null;
   #filterModel = null;
 
+  #aboutTripView = null;
   #tripSortView = null;
   #tripListView = new TripListView();
   #tripListEmptyView = null;
@@ -220,6 +222,9 @@ export default class PointsListPresenter {
     remove(this.#tripLoadingView);
 
     remove(this.#tripListEmptyView);
+    if (this.#aboutTripView !== null) {
+      remove(this.#aboutTripView);
+    }
 
     if (resetSortType) {
       this.#removeSort();
@@ -228,10 +233,22 @@ export default class PointsListPresenter {
     }
   }
 
+  #renderAboutTrip() {
+    this.#aboutTripView = new AboutTripView({
+      points: this.points,
+      destinations: this.destinations,
+      offers: this.offers
+    });
+    render(this.#aboutTripView, this.#tripMainContainer, RenderPosition.AFTERBEGIN);
+  }
+
   #renderSpaceTrip() {
     this.#installEnvironmentTemplate();
     if (!this.points) {
       return;
+    }
+    if (this.points.length > 0) {
+      this.#renderAboutTrip();
     }
     this.#renderPoints();
   }
